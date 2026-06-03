@@ -3,14 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <title>Comprobante de Crédito Fiscal DTE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Inter', sans-serif;
       font-size: 10px;
-      color: #000;
-      line-height: 1.3;
+      color: #334155; /* Slate 700 */
+      line-height: 1.4;
       margin: 0;
-      padding: 20px;
+      padding: 30px;
+      background-color: #ffffff;
     }
     .container {
       width: 100%;
@@ -22,28 +26,29 @@
     /* --- CABECERA (EMISOR Y LOGO) --- */
     .company-main-title {
       text-align: center;
-      font-size: 14px;
-      font-weight: bold;
-      color: #555;
-      margin-bottom: 15px;
+      font-size: 18px;
+      font-weight: 700;
+      color: <%= primaryColor %>;
+      margin-bottom: 20px;
       text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
     .top-grid {
       display: table;
       width: 100%;
-      margin-bottom: 10px;
+      margin-bottom: 20px;
     }
     .top-col-left {
       display: table-cell;
       width: 40%;
       vertical-align: top;
-      padding-right: 10px;
+      padding-right: 15px;
     }
     .top-col-mid {
       display: table-cell;
       width: 35%;
       vertical-align: top;
-      padding-right: 10px;
+      padding-right: 15px;
     }
     .top-col-right {
       display: table-cell;
@@ -52,90 +57,116 @@
       text-align: right;
     }
     .top-col-right img {
-      max-height: 80px;
+      max-height: 90px;
       max-width: 100%;
       object-fit: contain;
+      border-radius: 8px;
     }
 
     /* --- BARRAS DE TÍTULO --- */
     .section-header {
-      background-color: <%= secondaryColor %>;
-      color: #fff;
+      background: linear-gradient(135deg, <%= primaryColor %> 0%, <%= secondaryColor %> 100%);
+      color: #ffffff;
+      text-align: left;
+      font-weight: 600;
+      padding: 6px 12px;
+      font-size: 11px;
+      border-radius: 6px 6px 0 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .section-header.centered {
       text-align: center;
-      font-weight: bold;
-      padding: 4px;
-      font-size: 10px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+
+    /* --- CONTENEDORES --- */
+    .box-container {
+      background-color: #f8fafc; /* Slate 50 */
+      border: 1px solid #e2e8f0; /* Slate 200 */
+      border-top: none;
+      border-radius: 0 0 6px 6px;
+      padding: 12px;
+      margin-bottom: 20px;
     }
 
     /* --- DTE INFO --- */
     .dte-grid {
       display: table;
       width: 100%;
-      background-color: #f6f6f6;
-      margin-bottom: 15px;
     }
     .dte-qr-col {
       display: table-cell;
-      width: 20%;
+      width: 120px;
       vertical-align: middle;
       text-align: center;
-      padding: 5px;
+      padding-right: 15px;
     }
     .dte-qr-col img {
-      width: 100px;
-      height: 100px;
+      width: 110px;
+      height: 110px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
     .dte-info-col {
       display: table-cell;
-      width: 80%;
       vertical-align: top;
-      padding: 5px;
     }
 
     .dte-info-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 9px;
+      font-size: 9.5px;
     }
     .dte-info-table td {
-      padding: 4px 5px;
+      padding: 6px 8px;
       vertical-align: top;
     }
 
     /* --- RECEPTOR --- */
-    .receptor-box {
-      background-color: #f6f6f6;
-      padding: 8px;
-      margin-bottom: 15px;
-      font-size: 9px;
-    }
     .receptor-table {
       width: 100%;
       border-collapse: collapse;
     }
     .receptor-table td {
-      padding: 4px;
+      padding: 6px 8px;
       vertical-align: top;
       width: 33.33%;
     }
 
     /* --- TABLA PRINCIPAL --- */
+    .table-wrapper {
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
     table.data-table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 15px;
-      border: 1px solid <%= primaryColor %>;
     }
     table.data-table th, table.data-table td {
-      border: 1px solid <%= primaryColor %>;
-      padding: 5px;
+      padding: 8px 10px;
       text-align: center;
-      font-size: 9px;
+      font-size: 9.5px;
     }
     table.data-table th {
-      background-color: <%= secondaryColor %>;
-      color: #fff;
-      font-weight: bold;
+      background-color: #f1f5f9; /* Slate 100 */
+      color: #475569; /* Slate 600 */
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 8.5px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    table.data-table td {
+      border-bottom: 1px solid #f1f5f9;
+      color: #1e293b; /* Slate 800 */
+    }
+    table.data-table tbody tr:last-child td {
+      border-bottom: none;
     }
     table.data-table td.left { text-align: left; }
     table.data-table td.right { text-align: right; }
@@ -147,51 +178,100 @@
     }
     .footer-left {
       display: table-cell;
-      width: 49%;
+      width: 55%;
       vertical-align: top;
-      padding-right: 10px;
+      padding-right: 20px;
     }
     .footer-right {
       display: table-cell;
-      width: 49%;
+      width: 45%;
       vertical-align: top;
     }
 
     .totals-table {
       width: 100%;
       border-collapse: collapse;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      overflow: hidden;
     }
     .totals-table td {
-      border: 1px solid <%= primaryColor %>;
-      padding: 5px;
-      font-size: 9px;
+      padding: 6px 12px;
+      font-size: 9.5px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .totals-table tr:last-child td {
+      border-bottom: none;
     }
     .totals-table td.label {
-      background-color: #f6f6f6;
-      width: 70%;
+      background-color: #f8fafc;
+      color: #64748b;
+      font-weight: 500;
+      width: 65%;
     }
     .totals-table td.value {
       text-align: right;
-      width: 30%;
+      color: #0f172a;
+      font-weight: 600;
+      width: 35%;
     }
 
+    /* Fila de Total a Pagar Destacada */
+    .total-pagar-row td {
+      background-color: <%= primaryColor %> !important;
+      color: #ffffff !important;
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      padding: 10px 12px !important;
+    }
+
+    /* --- EXTENSION Y OBS --- */
     .ext-title {
-      background-color: <%= secondaryColor %>;
-      color: #fff;
-      text-align: center;
-      font-weight: bold;
-      padding: 4px;
+      background-color: #f1f5f9;
+      color: #475569;
+      text-align: left;
+      font-weight: 600;
+      padding: 6px 12px;
       font-size: 10px;
+      border-radius: 6px 6px 0 0;
+      border: 1px solid #e2e8f0;
+      border-bottom: none;
+      text-transform: uppercase;
     }
     .ext-box {
-      background-color: #f6f6f6;
-      padding: 8px;
-      font-size: 9px;
-      min-height: 80px;
+      background-color: #ffffff;
+      padding: 10px 12px;
+      font-size: 9.5px;
+      border: 1px solid #e2e8f0;
+      border-radius: 0 0 6px 6px;
+      margin-bottom: 15px;
     }
 
-    .kv-key { font-weight: bold; color: #444; }
-    .kv-val { color: #000; }
+    .letters-box {
+      background-color: rgba(212, 175, 55, 0.05); /* Soft gold fallback */
+      border-left: 3px solid <%= secondaryColor %>;
+      padding: 10px 12px;
+      margin-bottom: 15px;
+      border-radius: 0 6px 6px 0;
+    }
+
+    /* UTILIDADES TEXTO */
+    .kv-key { 
+      font-weight: 600; 
+      color: #64748b; /* Slate 500 */
+      font-size: 8.5px;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+      display: block;
+    }
+    .kv-val { 
+      color: #0f172a; /* Slate 900 */
+      font-weight: 500;
+      font-size: 10px;
+    }
+    
+    .mb-2 { margin-bottom: 8px; }
+    
   </style>
 </head>
 <body>
@@ -201,16 +281,29 @@
 
     <div class="top-grid">
       <div class="top-col-left">
-        <div><span class="kv-key">Nombre o Razón Social:</span> <span class="kv-val"><%= emisorNombreComercial %></span></div>
-        <div style="margin-top:4px;"><span class="kv-key">Actividad Económica:</span> <span class="kv-val"><%= emisorActividad %></span></div>
-        <div style="margin-top:4px;"><span class="kv-key">NIT:</span> <span class="kv-val"><%= emisorNit %></span> &nbsp;&nbsp; <span class="kv-key">NRC:</span> <span class="kv-val"><%= emisorNrc %></span></div>
-        <div style="margin-top:4px;"><span class="kv-key">Correo Electrónico:</span><br><span class="kv-val"><%= emisorEmail %></span></div>
-        <div style="margin-top:4px;"><span class="kv-key">Teléfono:</span> <span class="kv-val"><%= emisorPhone %></span></div>
+        <div class="mb-2"><span class="kv-key">Nombre o Razón Social</span> <span class="kv-val"><%= emisorNombreComercial %></span></div>
+        <div class="mb-2"><span class="kv-key">Actividad Económica</span> <span class="kv-val"><%= emisorActividad %></span></div>
+        <div class="mb-2">
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding:0; width:50%;"><span class="kv-key">NIT</span><span class="kv-val"><%= emisorNit %></span></td>
+              <td style="padding:0; width:50%;"><span class="kv-key">NRC</span><span class="kv-val"><%= emisorNrc %></span></td>
+            </tr>
+          </table>
+        </div>
+        <div class="mb-2"><span class="kv-key">Correo Electrónico</span> <span class="kv-val"><%= emisorEmail %></span></div>
+        <div><span class="kv-key">Teléfono</span> <span class="kv-val"><%= emisorPhone %></span></div>
       </div>
       <div class="top-col-mid">
-        <div><span class="kv-key">Dirección:</span> <span class="kv-val"><%= emisorDir %></span></div>
-        <div style="margin-top:4px;"><span class="kv-key">Casa Matriz/Sucursal:</span> <span class="kv-val"><%= establecimiento %></span></div>
-        <div style="margin-top:4px;"><span class="kv-key">Punto de Venta:</span> <span class="kv-val"><%= puntoVenta %></span></div>
+        <div class="mb-2"><span class="kv-key">Dirección</span> <span class="kv-val"><%= emisorDir %></span></div>
+        <div class="mb-2">
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding:0; width:50%;"><span class="kv-key">Casa Matriz / Sucursal</span><span class="kv-val"><%= establecimiento %></span></td>
+              <td style="padding:0; width:50%;"><span class="kv-key">Punto de Venta</span><span class="kv-val"><%= puntoVenta %></span></td>
+            </tr>
+          </table>
+        </div>
       </div>
       <div class="top-col-right">
         <% if (typeof logoUrl !== 'undefined' && logoUrl) { %>
@@ -220,103 +313,102 @@
     </div>
 
     <!-- SECCION DTE -->
-    <div class="section-header">
-      DOCUMENTO TRIBUTARIO ELECTRÓNICO<br>
-      COMPROBANTE DE CRÉDITO FISCAL
+    <div class="section-header centered">
+      DOCUMENTO TRIBUTARIO ELECTRÓNICO - COMPROBANTE DE CRÉDITO FISCAL
     </div>
-    <div class="dte-grid">
+    
+    <div class="dte-grid" style="margin-bottom: 20px;">
       <div class="dte-qr-col">
         <% if (typeof qrCodeBase64 !== 'undefined' && qrCodeBase64) { %>
           <img src="<%= qrCodeBase64 %>" alt="QR Code">
         <% } %>
       </div>
       <div class="dte-info-col">
-        <table class="dte-info-table">
-          <tr>
-            <td>
-              <div class="kv-key">Modelo de Facturación:</div>
-              <div class="kv-val">MODELO FACTURACIÓN PREVIO</div>
-            </td>
-            <td>
-              <div class="kv-key">Tipo de Transmisión:</div>
-              <div class="kv-val">TRANSMISIÓN NORMAL</div>
-            </td>
-            <td>
-              <div class="kv-key">Fecha y Hora de Generación:</div>
-              <div class="kv-val"><%= date %></div>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div class="kv-key">Código de Generación:</div>
-              <div class="kv-val" style="font-size:8px;"><%= codigoGeneracion %></div>
-            </td>
-            <td>
-              <div class="kv-key">Versión de JSON:</div>
-              <div class="kv-val"><%= versionJson %></div>
-            </td>
-            <td></td>
-          </tr>
-          <tr>
-            <td colspan="3">
-              <div class="kv-key">Número de Control:</div>
-              <div class="kv-val" style="font-size:8px;"><%= numeroControl %></div>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="3">
-              <div class="kv-key">Sello de Recepción:</div>
-              <div class="kv-val" style="font-size:8px;"><%= selloRecibido %></div>
-            </td>
-          </tr>
-        </table>
+        <div class="box-container" style="border-radius: 6px; border-top: 1px solid #e2e8f0; margin-bottom: 0;">
+          <table class="dte-info-table">
+            <tr>
+              <td>
+                <span class="kv-key">Modelo de Facturación</span>
+                <span class="kv-val">MODELO FACTURACIÓN PREVIO</span>
+              </td>
+              <td>
+                <span class="kv-key">Tipo de Transmisión</span>
+                <span class="kv-val">TRANSMISIÓN NORMAL</span>
+              </td>
+              <td>
+                <span class="kv-key">Fecha y Hora de Generación</span>
+                <span class="kv-val"><%= date %></span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span class="kv-key">Código de Generación</span>
+                <span class="kv-val" style="font-family: monospace; font-size:9.5px;"><%= codigoGeneracion %></span>
+              </td>
+              <td>
+                <span class="kv-key">Versión de JSON</span>
+                <span class="kv-val"><%= versionJson %></span>
+              </td>
+              <td>
+                <span class="kv-key">Número de Control</span>
+                <span class="kv-val" style="font-family: monospace; font-size:9.5px;"><%= numeroControl %></span>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="3" style="padding-top: 10px;">
+                <span class="kv-key">Sello de Recepción</span>
+                <span class="kv-val" style="font-family: monospace; font-size:9.5px; color: <%= primaryColor %>;"><%= selloRecibido %></span>
+              </td>
+            </tr>
+          </table>
+        </div>
       </div>
     </div>
 
     <!-- SECCION RECEPTOR -->
     <div class="section-header">RECEPTOR</div>
-    <div class="receptor-box">
+    <div class="box-container">
       <table class="receptor-table">
         <tr>
           <td>
-            <div class="kv-key">Nombre o Razón Social:</div>
-            <div class="kv-val"><%= clientName %></div>
+            <span class="kv-key">Nombre o Razón Social</span>
+            <span class="kv-val"><%= clientName %></span>
           </td>
           <td>
-            <div class="kv-key">Tipo de Documento:</div>
-            <div class="kv-val"><%= clientDocType %></div>
+            <span class="kv-key">Tipo de Documento</span>
+            <span class="kv-val"><%= clientDocType %></span>
           </td>
           <td>
-            <div class="kv-key">N° Documento:</div>
-            <div class="kv-val"><%= clientDoc %></div>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <div class="kv-key">NRC:</div>
-            <div class="kv-val"><%= clientNrc %></div>
-          </td>
-          <td>
-            <div class="kv-key">Actividad Económica:</div>
-            <div class="kv-val"><%= clientActividad %></div>
-          </td>
-          <td>
-            <div class="kv-key">Dirección:</div>
-            <div class="kv-val"><%= clientDir %></div>
+            <span class="kv-key">N° Documento</span>
+            <span class="kv-val"><%= clientDoc %></span>
           </td>
         </tr>
         <tr>
           <td>
-            <div class="kv-key">Nombre Comercial:</div>
-            <div class="kv-val"><%= clientComercial %></div>
+            <span class="kv-key">NRC</span>
+            <span class="kv-val"><%= clientNrc %></span>
           </td>
           <td>
-            <div class="kv-key">Correo Electrónico:</div>
-            <div class="kv-val"><%= clientEmail %></div>
+            <span class="kv-key">Actividad Económica</span>
+            <span class="kv-val"><%= clientActividad %></span>
           </td>
           <td>
-            <div class="kv-key">Teléfono:</div>
-            <div class="kv-val"><%= clientPhone %></div>
+            <span class="kv-key">Dirección</span>
+            <span class="kv-val"><%= clientDir %></span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span class="kv-key">Nombre Comercial</span>
+            <span class="kv-val"><%= clientComercial %></span>
+          </td>
+          <td>
+            <span class="kv-key">Correo Electrónico</span>
+            <span class="kv-val"><%= clientEmail %></span>
+          </td>
+          <td>
+            <span class="kv-key">Teléfono</span>
+            <span class="kv-val"><%= clientPhone %></span>
           </td>
         </tr>
       </table>
@@ -324,88 +416,106 @@
 
     <!-- CUERPO DEL DOCUMENTO -->
     <div class="section-header">CUERPO DEL DOCUMENTO</div>
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>N°</th>
-          <th>Cant.</th>
-          <th>Unidad</th>
-          <th>Descripción</th>
-          <th>Precio Unitario</th>
-          <th>Descuento por Ítem</th>
-          <th>Otros Montos No Afectos</th>
-          <th>Ventas No Sujetas</th>
-          <th>Ventas Exentas</th>
-          <th>Ventas Gravadas</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% if (typeof items !== 'undefined' && items.length > 0) { %>
-          <% items.forEach(function(item) { %>
-            <tr>
-              <td><%= item.num %></td>
-              <td><%= item.quantity.toFixed(2) %></td>
-              <td><%= item.unitName %></td>
-              <td class="left"><%= item.description %></td>
-              <td class="right">$<%= item.unitPrice.toFixed(2) %></td>
-              <td class="right">$<%= item.discount.toFixed(2) %></td>
-              <td class="right">$<%= item.otrosMontos.toFixed(2) %></td>
-              <td class="right">$<%= item.ventasNoSujetas.toFixed(2) %></td>
-              <td class="right">$<%= item.ventasExentas.toFixed(2) %></td>
-              <td class="right">$<%= item.ventasGravadas.toFixed(2) %></td>
-            </tr>
-          <% }); %>
-        <% } %>
-      </tbody>
-    </table>
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th width="3%">N°</th>
+            <th width="7%">Cant.</th>
+            <th width="8%">Unidad</th>
+            <th width="35%" class="left">Descripción</th>
+            <th width="10%" class="right">Precio Unit.</th>
+            <th width="8%" class="right">Desc.</th>
+            <th width="9%" class="right">No Afectos</th>
+            <th width="10%" class="right">V. Exentas</th>
+            <th width="10%" class="right">V. Gravadas</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (typeof items !== 'undefined' && items.length > 0) { %>
+            <% items.forEach(function(item) { %>
+              <tr>
+                <td><%= item.num %></td>
+                <td><%= item.quantity.toFixed(2) %></td>
+                <td><%= item.unitName %></td>
+                <td class="left" style="font-weight: 500;"><%= item.description %></td>
+                <td class="right">$<%= item.unitPrice.toFixed(2) %></td>
+                <td class="right">$<%= item.discount.toFixed(2) %></td>
+                <td class="right">$<%= item.otrosMontos.toFixed(2) %></td>
+                <td class="right">$<%= item.ventasExentas.toFixed(2) %></td>
+                <td class="right" style="font-weight: 600; color: <%= primaryColor %>;">$<%= item.ventasGravadas.toFixed(2) %></td>
+              </tr>
+            <% }); %>
+          <% } else { %>
+             <tr><td colspan="9" style="padding: 20px; color: #94a3b8;">No hay líneas de detalle para mostrar.</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
 
     <div class="footer-grid">
       <div class="footer-left">
-        <div class="section-header" style="text-align: left; padding-left: 10px;">Total en Letras: <%= totalLetras %></div>
-        <div style="background-color: #f6f6f6; padding: 8px; margin-bottom: 10px;">
-          <div class="kv-key">Observaciones:</div>
-          <div class="kv-val" style="margin-bottom: 8px;"><%= observaciones %></div>
-          <div class="kv-key">Condición de la Operación:</div>
-          <div class="kv-val"><%= condicionOperacion %></div>
+        <div class="letters-box">
+          <span class="kv-key" style="color: <%= secondaryColor %>">Total en Letras:</span>
+          <span class="kv-val" style="font-size: 11px; font-weight: 600;"><%= totalLetras %></span>
+        </div>
+        
+        <div class="ext-title">OBSERVACIONES Y CONDICIONES</div>
+        <div class="ext-box">
+          <div class="mb-2"><span class="kv-key">Observaciones:</span> <span class="kv-val"><%= observaciones %></span></div>
+          <div><span class="kv-key">Condición de la Operación:</span> <span class="kv-val"><%= condicionOperacion %></span></div>
         </div>
 
         <div class="ext-title">EXTENSIÓN</div>
-        <div class="ext-box">
-          <div style="margin-bottom: 4px;"><span class="kv-key">Nombre Entrega:</span></div>
-          <div style="margin-bottom: 4px;"><span class="kv-key">N° Documento:</span></div>
-          <div style="margin-bottom: 4px;"><span class="kv-key">Nombre Recibe:</span></div>
-          <div style="margin-bottom: 4px;"><span class="kv-key">N° Documento:</span></div>
+        <div class="ext-box" style="display: flex; justify-content: space-between;">
+          <div style="width: 48%;">
+            <div class="mb-2"><span class="kv-key">Nombre Entrega:</span> <span style="display:inline-block; width:100%; border-bottom: 1px solid #cbd5e1; height: 12px;"></span></div>
+            <div><span class="kv-key">N° Documento:</span> <span style="display:inline-block; width:100%; border-bottom: 1px solid #cbd5e1; height: 12px;"></span></div>
+          </div>
+          <div style="width: 48%;">
+            <div class="mb-2"><span class="kv-key">Nombre Recibe:</span> <span style="display:inline-block; width:100%; border-bottom: 1px solid #cbd5e1; height: 12px;"></span></div>
+            <div><span class="kv-key">N° Documento:</span> <span style="display:inline-block; width:100%; border-bottom: 1px solid #cbd5e1; height: 12px;"></span></div>
+          </div>
         </div>
       </div>
+
       <div class="footer-right">
-        <table class="totals-table">
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
           <tr>
-            <td style="background-color: <%= secondaryColor %>; color: #fff; font-weight: bold; text-align: center;" colspan="2">Total Operaciones</td>
-            <td style="background-color: <%= secondaryColor %>; color: #fff; font-weight: bold; text-align: center;">No Sujetas<br>$0.00</td>
-            <td style="background-color: <%= secondaryColor %>; color: #fff; font-weight: bold; text-align: center;">Exentas<br>$0.00</td>
-            <td style="background-color: <%= secondaryColor %>; color: #fff; font-weight: bold; text-align: center;">Gravadas<br>$<%= subtotal.toFixed(2) %></td>
+            <td style="background: <%= primaryColor %>; color: #fff; font-weight: 600; text-align: center; padding: 6px; font-size: 9px; border-radius: 6px 0 0 6px;">
+              No Sujetas<br><span style="font-size:10px;">$0.00</span>
+            </td>
+            <td style="background: <%= secondaryColor %>; color: #fff; font-weight: 600; text-align: center; padding: 6px; font-size: 9px;">
+              Exentas<br><span style="font-size:10px;">$0.00</span>
+            </td>
+            <td style="background: <%= primaryColor %>; color: #fff; font-weight: 600; text-align: center; padding: 6px; font-size: 9px; border-radius: 0 6px 6px 0;">
+              Gravadas<br><span style="font-size:10px;">$<%= subtotal.toFixed(2) %></span>
+            </td>
           </tr>
-          <tr><td class="label" colspan="4">Sumatoria de Ventas</td><td class="value">$<%= subtotal.toFixed(2) %></td></tr>
-          <tr><td class="label" colspan="4">Monto Global de Descuento, Bonificación, Rebajas y Otros a Ventas No Sujetas:</td><td class="value">$0.00</td></tr>
-          <tr><td class="label" colspan="4">Monto Global de Descuento, Bonificación, Rebajas y Otros a Ventas Exentas:</td><td class="value">$0.00</td></tr>
-          <tr><td class="label" colspan="4">Monto Global de Descuento, Bonificación, Rebajas y Otros a Ventas Gravadas:</td><td class="value">$0.00</td></tr>
-          <tr><td class="label" colspan="4">20 - Impuesto al Valor Agregado 13%:</td><td class="value">$<%= iva.toFixed(2) %></td></tr>
-          <tr><td class="label" colspan="4">Sub Total:</td><td class="value">$<%= subtotal.toFixed(2) %></td></tr>
-          <tr><td class="label" colspan="4">(-) IVA Retenido:</td><td class="value">$<%= ivaRetenido.toFixed(2) %></td></tr>
-          <tr><td class="label" colspan="4">(-) Retención Renta:</td><td class="value">$<%= retencionRenta.toFixed(2) %></td></tr>
-          <tr><td class="label" colspan="4">Monto Total de la Operación:</td><td class="value">$<%= montoTotalOperacion.toFixed(2) %></td></tr>
-          <tr><td class="label" colspan="4">Total Otros Montos No Afectos:</td><td class="value">$0.00</td></tr>
-          <tr><td class="label" colspan="4" style="font-weight: bold;">Total a Pagar:</td><td class="value" style="font-weight: bold;">$<%= totalPagar.toFixed(2) %></td></tr>
+        </table>
+
+        <table class="totals-table">
+          <tr><td class="label">Sumatoria de Ventas</td><td class="value">$<%= subtotal.toFixed(2) %></td></tr>
+          <tr><td class="label">Monto Descuento Ventas No Sujetas:</td><td class="value">$0.00</td></tr>
+          <tr><td class="label">Monto Descuento Ventas Exentas:</td><td class="value">$0.00</td></tr>
+          <tr><td class="label">Monto Descuento Ventas Gravadas:</td><td class="value">$0.00</td></tr>
+          <tr><td class="label">20 - Impuesto al Valor Agregado 13%:</td><td class="value" style="color: <%= secondaryColor %>;">$<%= iva.toFixed(2) %></td></tr>
+          <tr><td class="label">Sub Total:</td><td class="value">$<%= subtotal.toFixed(2) %></td></tr>
+          <tr><td class="label">(-) IVA Retenido:</td><td class="value" style="color: #ef4444;">$<%= ivaRetenido.toFixed(2) %></td></tr>
+          <tr><td class="label">(-) Retención Renta:</td><td class="value" style="color: #ef4444;">$<%= retencionRenta.toFixed(2) %></td></tr>
+          <tr><td class="label">Monto Total de la Operación:</td><td class="value">$<%= montoTotalOperacion.toFixed(2) %></td></tr>
+          <tr><td class="label">Total Otros Montos No Afectos:</td><td class="value">$0.00</td></tr>
+          <tr class="total-pagar-row"><td class="label">Total a Pagar:</td><td class="value">$<%= totalPagar.toFixed(2) %></td></tr>
         </table>
       </div>
     </div>
     
-    <div class="created-by" style="display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0.8; margin-top: 20px;">
-      <span style="font-size: 8px; margin-bottom: 2px; color: #666;">Documento generado a través de la plataforma</span>
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 30px; padding-top: 20px; border-top: 1px dashed #e2e8f0;">
+      <span style="font-size: 8px; font-weight: 500; color: #94a3b8; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Documento tributario procesado por plataforma electrónica</span>
       <% if (typeof nexxusLogoUrl !== 'undefined' && nexxusLogoUrl) { %>
-        <img src="<%= nexxusLogoUrl %>" alt="Nexxus" style="height: 25px; object-fit: contain;">
+        <img src="<%= nexxusLogoUrl %>" alt="Nexxus" style="height: 22px; opacity: 0.7; filter: grayscale(100%);">
       <% } else { %>
-        <strong>NEXXUS</strong>
+        <strong style="color: #94a3b8; font-size: 14px; letter-spacing: 1px;">NEXXUS</strong>
       <% } %>
     </div>
 

@@ -3,15 +3,20 @@ import ejs from 'ejs';
 import path from 'path';
 import fs from 'fs';
 import qrcode from 'qrcode';
+import { numeroALetras } from '../utils/numberToLetters';
 
 export const generateInvoicePdf = async (invoiceData: any, settings: any, tenant: any = {}): Promise<Buffer> => {
   // Mapper del JSON para simular lo que exige MH según tu ejemplo
   // Se usa invoiceData si existe, sino se usa fallback del ejemplo
   
-  const subtotal = invoiceData.lines ? invoiceData.lines.reduce((acc: number, curr: any) => acc + (Number(curr.quantity) * Number(curr.historicalUnitPrice)), 0) : 5011.20;
+  const subtotal = invoiceData.lines && invoiceData.lines.length > 0
+    ? invoiceData.lines.reduce((acc: number, curr: any) => acc + (Number(curr.quantity) * Number(curr.historicalUnitPrice)), 0)
+    : Number(invoiceData.totalAmount || 0);
+
   const iva = subtotal * 0.13;
-  const ivaRetenido = 50.11; // Hardcoded temporal o de BD
-  const retencionRenta = 0;
+  // Si invoiceData tiene ivaRetenido lo usamos, sino asumimos el 1% si es Gran Contribuyente (ejemplo: 50.11 para 5011.20)
+  const ivaRetenido = invoiceData.ivaRetenido !== undefined ? Number(invoiceData.ivaRetenido) : (subtotal >= 100 ? subtotal * 0.01 : 0);
+  const retencionRenta = invoiceData.retencionRenta !== undefined ? Number(invoiceData.retencionRenta) : 0;
   const montoTotalOperacion = subtotal + iva;
   const totalPagar = montoTotalOperacion - ivaRetenido - retencionRenta;
 
@@ -35,20 +40,20 @@ export const generateInvoicePdf = async (invoiceData: any, settings: any, tenant
     // EMISOR
     logoUrl: settings.logoUrl ? `http://localhost:3000${settings.logoUrl}` : '',
     companyName: settings.companyName || tenant.businessName || 'G&G SOLUTIONS, SOCIEDAD POR ACCIONES SIMPLIFICADA DE CAPITAL VARIABLE',
-    emisorNombreComercial: settings.commercialName || settings.companyName || tenant.businessName || 'G&G SOLUTIONS',
+    emisorNombreComercial: settings.commercialName || settings.companyName || tenant.businessName || 'G&G SOLUTIONS, SOCIEDAD POR ACCIONES SIMPLIFICADA DE CAPITAL VARIABLE',
     emisorActividad: settings.economicActivity || 'CONSULTORÍAS Y GESTIÓN DE SERVICIOS INFORMÁTICOS',
-    emisorNit: settings.mhNit || tenant.nit || '0614-100424-101-5',
-    emisorNrc: tenant.nrc || '342043-9',
-    emisorEmail: settings.smtpUser || 'rafaelgomez@ggsolutionssv.com',
+    emisorNit: tenant.nit || settings.mhNit || '0614-100424-101-5',
+    emisorNrc: settings.nrc || tenant.nrc || '342043-9',
+    emisorEmail: settings.email || settings.smtpUser || 'rafaelgomez@ggsolutionssv.com',
     emisorPhone: settings.phone || '7868-8228',
     emisorDir: settings.address || 'CALLE ITSHUATAN, POLIGONO J -33, COLONIA JARDINES DE MERLIOT DISTRITO DE SANTA TECLA MUNICIPIO DE LA LIBERTAD SUR DEPARTAMENTO DE LA LIBERTAD',
     establecimiento: settings.establecimiento || 'M001',
     puntoVenta: settings.puntoVenta || 'P001',
     
     // DTE INFO
-    codigoGeneracion: invoiceData.generationCode || invoiceData.id || '0F1C338C-E644-4D3E-A576-BB4C2AD807EA',
-    numeroControl: invoiceData.controlNumber || 'DTE-03-M001P001-000000000000054',
-    selloRecibido: invoiceData.status === 'PROCESSED' ? invoiceData.mhStamp : '2026E28E053B09AD4A0D97E2CD9DF9B3B02BSHPF',
+    codigoGeneracion: invoiceData.generationCode || invoiceData.id || '',
+    numeroControl: invoiceData.controlNumber || '',
+    selloRecibido: invoiceData.status === 'PROCESSED' ? invoiceData.mhStamp : '',
     date: new Date(invoiceData.issueDate || new Date()).toLocaleString('es-SV', {
       day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'
     }),
@@ -77,20 +82,7 @@ export const generateInvoicePdf = async (invoiceData: any, settings: any, tenant
       ventasNoSujetas: 0,
       ventasExentas: 0,
       ventasGravadas: Number(i.quantity) * Number(i.historicalUnitPrice)
-    })) : [
-      {
-        num: 1,
-        description: 'Microsoft 365 Business Standard / Compromiso anual, pago anual',
-        quantity: 40.00,
-        unitName: 'Unidad',
-        unitPrice: 125.28,
-        discount: 0.00,
-        otrosMontos: 0.00,
-        ventasNoSujetas: 0.00,
-        ventasExentas: 0.00,
-        ventasGravadas: 5011.20
-      }
-    ],
+    })) : [],
 
     // TOTALS
     subtotal: subtotal,
@@ -99,7 +91,7 @@ export const generateInvoicePdf = async (invoiceData: any, settings: any, tenant
     retencionRenta: retencionRenta,
     montoTotalOperacion: montoTotalOperacion,
     totalPagar: totalPagar,
-    totalLetras: 'CINCO MIL SEISCIENTOS DOCE DÓLARES Y CINCUENTA Y CUATRO CENTAVOS',
+    totalLetras: numeroALetras(totalPagar),
     observaciones: '30 Dias Credito',
     condicionOperacion: 'A CRÉDITO',
     nexxusLogoUrl: nexxusLogoUrl
@@ -116,7 +108,7 @@ export const generateInvoicePdf = async (invoiceData: any, settings: any, tenant
   });
 
   const page = await browser.newPage();
-  await page.setContent(html, { waitUntil: 'networkidle0' });
+  await page.setContent(html, { waitUntil: 'domcontentloaded' });
 
   const pdfBuffer = await page.pdf({
     format: 'Letter',

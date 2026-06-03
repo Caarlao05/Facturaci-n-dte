@@ -17,6 +17,8 @@ const SettingsView = () => {
     address: '',
     establecimiento: 'M001',
     puntoVenta: 'P001',
+    nrc: '',
+    email: '',
     primaryColor: '#0F172A',
     secondaryColor: '#D4AF37',
     mhNit: '',
@@ -50,6 +52,8 @@ const SettingsView = () => {
           address: data.data.address || '',
           establecimiento: data.data.establecimiento || 'M001',
           puntoVenta: data.data.puntoVenta || 'P001',
+          nrc: data.data.nrc || '',
+          email: data.data.email || '',
           primaryColor: data.data.primaryColor || '#0F172A',
           secondaryColor: data.data.secondaryColor || '#D4AF37',
           mhNit: data.data.mhNit || '',
@@ -218,6 +222,14 @@ const SettingsView = () => {
                 <div className="form-group">
                   <label className="antigravity-label">Actividad Económica</label>
                   <input type="text" name="economicActivity" className="antigravity-input" placeholder="CONSULTORÍAS Y GESTIÓN..." value={formData.economicActivity} onChange={handleChange} />
+                </div>
+                <div className="form-group">
+                  <label className="antigravity-label">NRC Comercial</label>
+                  <input type="text" name="nrc" className="antigravity-input" placeholder="342043-9" value={formData.nrc} onChange={handleChange} />
+                </div>
+                <div className="form-group">
+                  <label className="antigravity-label">Correo Electrónico (Contacto)</label>
+                  <input type="email" name="email" className="antigravity-input" placeholder="correo@empresa.com" value={formData.email} onChange={handleChange} />
                 </div>
                 <div className="form-group">
                   <label className="antigravity-label">Teléfono de Contacto</label>

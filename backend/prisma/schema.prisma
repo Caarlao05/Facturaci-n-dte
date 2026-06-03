@@ -156,6 +156,8 @@ model TenantSettings {
   address         String?
   establecimiento String?
   puntoVenta      String?
+  nrc             String?
+  email           String?
   primaryColor    String   @default("#0b1121")
   secondaryColor  String   @default("#D4AF37")
   logoUrl         String?
