@@ -53,10 +53,13 @@ app.get('/api/superadmin/tenants', requireAuth, getAllTenants);
 app.post('/api/superadmin/tenants', requireAuth, createTenant);
 
 // Catálogos (Clientes y Productos)
+import { validate } from './middlewares/validate.middleware';
+import { createCustomerSchema, createProductSchema } from './schemas/catalog.schema';
+
 app.get('/api/customers', requireAuth, getCustomers);
-app.post('/api/customers', requireAuth, createCustomer);
+app.post('/api/customers', requireAuth, validate(createCustomerSchema), createCustomer);
 app.get('/api/products', requireAuth, getProducts);
-app.post('/api/products', requireAuth, createProduct);
+app.post('/api/products', requireAuth, validate(createProductSchema), createProduct);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'API is running' });
