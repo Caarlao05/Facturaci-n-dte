@@ -1,0 +1,120 @@
+.purchases-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.view-header h2 {
+  color: var(--text-primary);
+  font-size: 1.5rem;
+}
+
+.purchases-table-container {
+  overflow-x: auto;
+  padding: 1rem;
+}
+
+.purchases-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.purchases-table th {
+  padding: 1rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.purchases-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.code-badge {
+  background-color: var(--bg-tertiary);
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--accent-color);
+}
+
+.doc-icons {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.icon-json { color: #f59e0b; cursor: pointer; }
+.icon-pdf { color: #ef4444; cursor: pointer; }
+
+.status-badge {
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.status-badge.pending_approval {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+
+.status-badge.approved {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+.status-badge.rejected {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-approve {
+  background: none;
+  border: none;
+  color: #10b981;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.btn-reject {
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.btn-approve:hover, .btn-reject:hover {
+  transform: scale(1.2);
+}
+
+.btn-pay {
+  background-color: var(--accent-color);
+  color: #0b1121;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.4rem 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn-pay:hover {
+  opacity: 0.8;
+}

@@ -1,0 +1,234 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         String   @default("TENANT_ADMIN")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  tenantId     String?
+  tenant       Tenant?  @relation(fields: [tenantId], references: [id])
+
+  @@map("users")
+}
+
+model Tenant {
+  id             String            @id @default(uuid())
+  businessName   String
+  nit            String            @unique
+  nrc            String?
+  environment    String            @default("00")
+  createdAt      DateTime          @default(now())
+  users          User[]
+  apiKeys        ApiKey[]
+  quotas         TenantQuota?
+  settings       TenantSettings?
+  invoices       Invoice[]
+  receivedInvs   ReceivedInvoice[]
+  customers      Customer[]
+  products       Product[]
+
+  @@map("tenants")
+}
+
+model ApiKey {
+  id        String   @id @default(uuid())
+  keyHash   String   @unique
+  name      String
+  isActive  Boolean  @default(true)
+  tenantId  String
+  createdAt DateTime @default(now())
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+
+  @@map("api_keys")
+}
+
+model TenantQuota {
+  id           String   @id @default(uuid())
+  tenantId     String   @unique
+  balanceDtes  Int      @default(0)
+  totalEmitted Int      @default(0)
+  lastRecharge DateTime @default(now())
+  tenant       Tenant   @relation(fields: [tenantId], references: [id])
+
+  @@map("tenant_quotas")
+}
+
+model Customer {
+  id                   String    @id @default(uuid())
+  tenantId             String?
+  name                 String
+  commercialName       String?
+  nit                  String?
+  nrc                  String?
+  dui                  String?
+  email                String?
+  phone                String?
+  address              String?
+  economicActivityCode String?
+  createdAt            DateTime  @default(now())
+  invoices             Invoice[]
+  tenant               Tenant?   @relation(fields: [tenantId], references: [id])
+
+  @@map("customers")
+}
+
+model Product {
+  id           String        @id @default(uuid())
+  tenantId     String?
+  code         String
+  description  String        @db.Text
+  unitPrice    Decimal       @db.Decimal(10, 2)
+  taxType      String
+  isActive     Boolean       @default(true)
+  updatedAt    DateTime      @updatedAt
+  invoiceLines InvoiceLine[]
+  tenant       Tenant?       @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, code])
+  @@map("products")
+}
+
+model Invoice {
+  id               String             @id @default(uuid())
+  customerId       String
+  tenantId         String?
+  generationCode   String?            @unique
+  receptionStamp   String?
+  totalAmount      Decimal            @db.Decimal(10, 2)
+  totalTaxes       Decimal            @db.Decimal(10, 2)
+  issueDate        DateTime
+  status           String
+  pdfBlobUrl       String?
+  createdAt        DateTime           @default(now())
+  customer         Customer           @relation(fields: [customerId], references: [id])
+  tenant           Tenant?            @relation(fields: [tenantId], references: [id])
+  lines            InvoiceLine[]
+  dteTransmissions DteTransmission[]
+  payments         Payment[]
+  invalidations    DteInvalidation[]
+
+  @@map("invoices")
+}
+
+model InvoiceLine {
+  id                  String   @id @default(uuid())
+  invoiceId           String
+  productId           String?
+  quantity            Decimal  @db.Decimal(10, 2)
+  historicalUnitPrice Decimal  @db.Decimal(10, 2)
+  subtotal            Decimal  @db.Decimal(10, 2)
+  invoice             Invoice  @relation(fields: [invoiceId], references: [id])
+  product             Product? @relation(fields: [productId], references: [id])
+
+  @@map("invoice_lines")
+}
+
+model DteTransmission {
+  id               String   @id @default(uuid())
+  invoiceId        String
+  transmissionDate DateTime
+  requestPayload   Json?
+  responsePayload  Json?
+  httpStatus       Int?
+  mhStatusCode     String?
+  invoice          Invoice  @relation(fields: [invoiceId], references: [id])
+
+  @@map("dte_transmissions")
+}
+
+model TenantSettings {
+  id              String   @id @default(uuid())
+  tenantId        String   @unique
+  companyName     String
+  commercialName  String?
+  economicActivity String?
+  phone           String?
+  address         String?
+  establecimiento String?
+  puntoVenta      String?
+  primaryColor    String   @default("#0b1121")
+  secondaryColor  String   @default("#D4AF37")
+  logoUrl         String?
+  mhNit           String?
+  mhApiPassword   String?
+  wompiPublicKey  String?
+  wompiPrivateKey String?
+  smtpHost        String?
+  smtpPort        Int?
+  smtpUser        String?
+  smtpPass        String?
+  updatedAt       DateTime @updatedAt
+  tenant          Tenant   @relation(fields: [tenantId], references: [id])
+
+  @@map("tenant_settings")
+}
+
+model ReceivedInvoice {
+  id              String   @id @default(uuid())
+  supplierNit     String
+  supplierName    String
+  generationCode  String   @unique
+  receptionStamp  String
+  totalAmount     Float
+  totalTaxes      Float    @default(0)
+  status          String   @default("DRAFT")
+  jsonStorageUrl  String?
+  pdfStorageUrl   String?
+  receptionDate   DateTime @default(now())
+  tenantId        String?
+  tenant          Tenant?  @relation(fields: [tenantId], references: [id])
+  payments        Payment[]
+
+  @@map("received_invoices")
+}
+
+model Payment {
+  id                String   @id @default(uuid())
+  invoiceId         String?  
+  receivedInvoiceId String?
+  amount            Float
+  paymentMethod     String
+  transactionRef    String?  @unique
+  status            String   @default("PENDING")
+  paymentDate       DateTime @default(now())
+
+  invoice           Invoice?          @relation(fields: [invoiceId], references: [id])
+  receivedInvoice   ReceivedInvoice?  @relation(fields: [receivedInvoiceId], references: [id])
+}
+
+model DteInvalidation {
+  id               String   @id @default(uuid())
+  invoiceId        String
+  invalidatedAt    DateTime @default(now())
+  reason           String
+  responsibleName  String
+  requestPayload   Json?
+  responsePayload  Json?
+  mhStatusCode     String?
+
+  invoice          Invoice  @relation(fields: [invoiceId], references: [id])
+
+  @@map("dte_invalidations")
+}
+
+model CatalogItem {
+  id          String   @id @default(uuid())
+  catalogId   String   // e.g., "016" (Condición de Operación)
+  code        String   // e.g., "1" (Contado)
+  value       String   // Valor a mostrar
+  description String?
+  isActive    Boolean  @default(true)
+
+  @@unique([catalogId, code])
+  @@map("catalog_items")
+}

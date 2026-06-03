@@ -1,0 +1,114 @@
+.bulk-upload-view {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dropzone {
+  border: 2px dashed #d4af37;
+  border-radius: 16px;
+  padding: 4rem 2rem;
+  text-align: center;
+  background-color: var(--bg-tertiary);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dropzone:hover, .dropzone.active {
+  background-color: rgba(212, 175, 55, 0.05);
+  border-color: var(--accent-hover);
+}
+
+.dropzone .icon {
+  color: #d4af37;
+  background: rgba(212, 175, 55, 0.1);
+  padding: 1rem;
+  border-radius: 50%;
+}
+
+.dropzone h3 {
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.dropzone p {
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Tabla de Preview */
+.preview-panel {
+  background: var(--bg-secondary);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+  border: 1px solid var(--border-color);
+}
+
+.preview-panel h3 {
+  margin-top: 0;
+  color: var(--text-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+}
+
+.data-table th {
+  text-align: left;
+  padding: 1rem;
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.85rem;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.data-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.row-error td {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+.error-badge {
+  background: #fee2e2;
+  color: #ef4444;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.status-badge.success {
+  background: #dcfce7;
+  color: #16a34a;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.hidden-input {
+  display: none;
+}
