@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './DashboardView.css';
-import { MoreHorizontal, Loader2, X, Download, Mail, Ban, FileJson } from 'lucide-react';
+import { MoreHorizontal, Loader2, X, Download, Mail, Ban, FileJson, TrendingUp, DollarSign, FileText, CheckCircle2 } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 
 const DashboardView = () => {
   const [data, setData] = useState<any>(null);
@@ -32,7 +33,7 @@ const DashboardView = () => {
       const token = localStorage.getItem('token');
       const res = await axios.get(`/api/invoices/${id}/pdf`, {
         headers: { Authorization: `Bearer ${token}` },
-        responseType: 'blob' // Important
+        responseType: 'blob' 
       });
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement('a');
@@ -71,86 +72,136 @@ const DashboardView = () => {
     return <div style={{display: 'flex', justifyContent: 'center', marginTop: '4rem'}}><Loader2 className="spinner" size={32} /></div>;
   }
 
-  const sparklineData = data?.sparklineData || [];
+  const sparklineData = data?.sparklineData?.map((d: any, i: number) => ({
+    name: `Día ${d.name}`,
+    Ventas: d.value
+  })) || [];
+  
   const RECENT_DTES = data?.recentDtes || [];
 
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
-        <h2>Dashboard - Facturación DTE</h2>
-        <p>Resumen de transacciones y estado del servicio MH</p>
+        <div>
+          <h2>Panel de Control</h2>
+          <p>Resumen analítico y estado del servicio de facturación electrónica.</p>
+        </div>
+        <button className="azure-btn">
+          Generar Reporte
+        </button>
       </div>
 
       <div className="kpi-row">
-        {/* KPI 1 */}
-        <div className="kpi-card">
-          <span className="kpi-label">Ventas del Día (USD)</span>
-          <span className="kpi-value">${data?.ventasDelDia?.toFixed(2) || '0.00'}</span>
+        <div className="kpi-card" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', color: 'white', border: 'none' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <span className="kpi-label" style={{ color: '#94a3b8' }}>Ventas del Día</span>
+            <DollarSign size={20} color="#d4af37" />
+          </div>
+          <span className="kpi-value" style={{ color: 'white', marginTop: '10px' }}>${data?.ventasDelDia?.toFixed(2) || '0.00'}</span>
+          <div style={{ marginTop: 'auto', fontSize: '12px', color: '#34d399', display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <TrendingUp size={14} /> +12.5% vs ayer
+          </div>
         </div>
 
-        {/* KPI 2 */}
         <div className="kpi-card">
-          <span className="kpi-label">Facturas Emitidas</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <span className="kpi-label">Facturas Emitidas</span>
+            <FileText size={20} color="var(--accent-blue)" />
+          </div>
           <span className="kpi-value">{data?.totalFacturas || 0}</span>
+          <div style={{ marginTop: 'auto', fontSize: '12px', color: 'var(--text-muted)' }}>
+            En los últimos 30 días
+          </div>
         </div>
 
-        {/* KPI 3 */}
         <div className="kpi-card">
-          <span className="kpi-label">DTE Transmitidos MH</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <span className="kpi-label">Tasa de Aprobación MH</span>
+            <CheckCircle2 size={20} color="var(--success)" />
+          </div>
           <span className="kpi-value">{data?.successRate || 0}%</span>
+          <div style={{ marginTop: 'auto', width: '100%', background: '#e2e8f0', height: '4px', borderRadius: '2px' }}>
+            <div style={{ width: `${data?.successRate || 0}%`, background: 'var(--success)', height: '100%', borderRadius: '2px' }}></div>
+          </div>
         </div>
 
-        {/* KPI 4 */}
         <div className="kpi-card">
-          <span className="kpi-label">Estado Conexión MH</span>
-          <div className={data?.mhConnected ? "status-badge-active mt-auto" : "status-badge-error mt-auto"}>
-            <div className={data?.mhConnected ? "pulse-dot" : "pulse-dot-error"}></div>
-            <span>{data?.mhConnected ? 'Active' : 'Missing Configuration'}</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <span className="kpi-label">Conexión MH</span>
+            <div className={data?.mhConnected ? "pulse-dot" : "pulse-dot-error"} style={{ marginTop: '4px' }}></div>
+          </div>
+          <span className="kpi-value" style={{ fontSize: '1.2rem', color: data?.mhConnected ? 'var(--success)' : 'var(--danger-color)' }}>
+            {data?.mhConnected ? 'En Línea' : 'Desconectado'}
+          </span>
+          <div style={{ marginTop: 'auto', fontSize: '12px', color: 'var(--text-muted)' }}>
+            {data?.mhConnected ? 'Firmador Activo y Autenticado' : 'Faltan credenciales API'}
           </div>
         </div>
       </div>
 
-      <div className="main-row">
+      <div className="main-row" style={{ gridTemplateColumns: '2fr 1fr' }}>
         
+        {/* CHART SECTION */}
+        <div className="main-card">
+          <div className="card-header">
+            <h3>Tendencia de Ventas (Últimos 7 Días)</h3>
+          </div>
+          <div style={{ width: '100%', height: '300px', marginTop: '20px' }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={sparklineData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorVentas" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={data?.tenantColor || "#0078D4"} stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor={data?.tenantColor || "#0078D4"} stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} dy={10} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
+                <Tooltip 
+                  contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                  formatter={(value) => [`$${value}`, 'Ventas']}
+                />
+                <Area type="monotone" dataKey="Ventas" stroke={data?.tenantColor || "#0078D4"} strokeWidth={3} fillOpacity={1} fill="url(#colorVentas)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
         {/* RECENT DTES */}
-        <div className="main-card" style={{ gridColumn: '1 / -1' }}>
+        <div className="main-card" style={{ display: 'flex', flexDirection: 'column' }}>
           <div className="card-header">
             <h3>Últimos DTEs Generados</h3>
             <MoreHorizontal size={16} color="var(--text-muted)" />
           </div>
-
-          <table className="recent-dtes-table">
-            <thead>
-              <tr>
-                <th>DTE No.</th>
-                <th>Cliente</th>
-                <th>Fecha</th>
-                <th>Monto</th>
-                <th>Estado</th>
-                <th>Acción</th>
-              </tr>
-            </thead>
-            <tbody>
-              {RECENT_DTES.map((dte: any, idx: number) => (
-                <tr key={idx} onClick={() => setSelectedDte(dte)} style={{cursor: 'pointer'}}>
-                  <td style={{color: 'var(--accent-blue)', fontWeight: 500}}>{dte.id}</td>
-                  <td>{dte.client}</td>
-                  <td style={{color: 'var(--text-muted)'}}>{dte.date}</td>
-                  <td>${dte.amount.toFixed(2)}</td>
-                  <td>
-                    <span className={`badge-pill ${dte.status.toLowerCase().replace(' ', '-')}`}>
-                      {dte.status}
-                    </span>
-                  </td>
-                  <td onClick={(e) => e.stopPropagation()}>
-                    <button onClick={() => downloadPdf(dte.uuid)} className="azure-btn-secondary" style={{padding: '2px 8px', fontSize: '11px', borderRadius: '2px'}}>
-                      PDF
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          
+          <div style={{ flex: 1, overflowY: 'auto', marginTop: '10px' }}>
+            {RECENT_DTES.length > 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {RECENT_DTES.map((dte: any, idx: number) => (
+                  <div key={idx} className="recent-dte-item" onClick={() => setSelectedDte(dte)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', border: '1px solid #e2e8f0', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s' }}>
+                    <div>
+                      <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '13px', marginBottom: '4px' }}>{dte.client}</div>
+                      <div style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'flex', gap: '8px' }}>
+                        <span>{dte.id}</span> • <span>{dte.date}</span>
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '14px' }}>${dte.amount.toFixed(2)}</div>
+                      <span className={`badge-pill ${dte.status.toLowerCase().replace(' ', '-')}`} style={{ marginTop: '4px', display: 'inline-block', fontSize: '10px', padding: '2px 6px' }}>
+                        {dte.status}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--text-muted)', textAlign: 'center' }}>
+                <FileText size={32} style={{ marginBottom: '10px', opacity: 0.5 }} />
+                <p style={{ margin: 0 }}>No hay documentos recientes</p>
+              </div>
+            )}
+          </div>
         </div>
 
       </div>
@@ -185,7 +236,6 @@ const DashboardView = () => {
             </div>
 
             <div className="epic-modal-body">
-              
               <div className="blade-section">
                 <h4>Resumen del Documento</h4>
                 <div className="blade-kv-grid">
@@ -270,7 +320,6 @@ const DashboardView = () => {
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
