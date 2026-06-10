@@ -13,7 +13,7 @@
       color: #334155; /* Slate 700 */
       line-height: 1.4;
       margin: 0;
-      padding: 30px;
+      padding: 15px;
       background-color: #ffffff;
     }
     .container {
@@ -29,14 +29,14 @@
       font-size: 18px;
       font-weight: 700;
       color: <%= primaryColor %>;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
     .top-grid {
       display: table;
       width: 100%;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
     .top-col-left {
       display: table-cell;
@@ -54,7 +54,7 @@
       display: table-cell;
       width: 25%;
       vertical-align: middle;
-      text-align: right;
+      text-align: center;
     }
     .top-col-right img {
       max-height: 90px;
@@ -88,8 +88,8 @@
       border: 1px solid #e2e8f0; /* Slate 200 */
       border-top: none;
       border-radius: 0 0 6px 6px;
-      padding: 12px;
-      margin-bottom: 20px;
+      padding: 8px 12px;
+      margin-bottom: 10px;
     }
 
     /* --- DTE INFO --- */
@@ -141,7 +141,7 @@
       border: 1px solid #e2e8f0;
       border-radius: 6px;
       overflow: hidden;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
 
     table.data-table {
@@ -250,8 +250,8 @@
     .letters-box {
       background-color: rgba(212, 175, 55, 0.05); /* Soft gold fallback */
       border-left: 3px solid <%= secondaryColor %>;
-      padding: 10px 12px;
-      margin-bottom: 15px;
+      padding: 8px 12px;
+      margin-bottom: 10px;
       border-radius: 0 6px 6px 0;
     }
 
@@ -268,9 +268,18 @@
       color: #0f172a; /* Slate 900 */
       font-weight: 500;
       font-size: 10px;
+      word-break: break-word;
     }
     
     .mb-2 { margin-bottom: 8px; }
+
+    /* EVITAR SALTO DE PAGINA */
+    .container {
+      page-break-after: auto;
+    }
+    .box-container, .table-wrapper, .footer-grid, .top-grid {
+      page-break-inside: avoid;
+    }
     
   </style>
 </head>
@@ -281,26 +290,26 @@
 
     <div class="top-grid">
       <div class="top-col-left">
-        <div class="mb-2"><span class="kv-key">Nombre o Razón Social</span> <span class="kv-val"><%= emisorNombreComercial %></span></div>
-        <div class="mb-2"><span class="kv-key">Actividad Económica</span> <span class="kv-val"><%= emisorActividad %></span></div>
+        <div class="mb-2"><span class="kv-key">Nombre o Razón Social:</span> <span class="kv-val"><%= emisorNombreComercial %></span></div>
+        <div class="mb-2"><span class="kv-key">Actividad Económica:</span> <span class="kv-val"><%= emisorActividad %></span></div>
         <div class="mb-2">
           <table style="width: 100%; border-collapse: collapse;">
             <tr>
-              <td style="padding:0; width:50%;"><span class="kv-key">NIT</span><span class="kv-val"><%= emisorNit %></span></td>
-              <td style="padding:0; width:50%;"><span class="kv-key">NRC</span><span class="kv-val"><%= emisorNrc %></span></td>
+              <td style="padding:0; width:50%;"><span class="kv-key">NIT:</span><span class="kv-val"><%= emisorNit %></span></td>
+              <td style="padding:0; width:50%;"><span class="kv-key">NRC:</span><span class="kv-val"><%= emisorNrc %></span></td>
             </tr>
           </table>
         </div>
-        <div class="mb-2"><span class="kv-key">Correo Electrónico</span> <span class="kv-val"><%= emisorEmail %></span></div>
-        <div><span class="kv-key">Teléfono</span> <span class="kv-val"><%= emisorPhone %></span></div>
+        <div class="mb-2"><span class="kv-key">Correo Electrónico:</span> <span class="kv-val"><%= emisorEmail %></span></div>
+        <div><span class="kv-key">Teléfono:</span> <span class="kv-val"><%= emisorPhone %></span></div>
       </div>
       <div class="top-col-mid">
-        <div class="mb-2"><span class="kv-key">Dirección</span> <span class="kv-val"><%= emisorDir %></span></div>
+        <div class="mb-2"><span class="kv-key">Dirección:</span> <span class="kv-val"><%= emisorDir %></span></div>
         <div class="mb-2">
           <table style="width: 100%; border-collapse: collapse;">
             <tr>
-              <td style="padding:0; width:50%;"><span class="kv-key">Casa Matriz / Sucursal</span><span class="kv-val"><%= establecimiento %></span></td>
-              <td style="padding:0; width:50%;"><span class="kv-key">Punto de Venta</span><span class="kv-val"><%= puntoVenta %></span></td>
+              <td style="padding:0; width:50%;"><span class="kv-key">Casa Matriz / Sucursal:</span><span class="kv-val"><%= establecimiento %></span></td>
+              <td style="padding:0; width:50%;"><span class="kv-key">Punto de Venta:</span><span class="kv-val"><%= puntoVenta %></span></td>
             </tr>
           </table>
         </div>
@@ -327,36 +336,32 @@
         <div class="box-container" style="border-radius: 6px; border-top: 1px solid #e2e8f0; margin-bottom: 0;">
           <table class="dte-info-table">
             <tr>
-              <td>
-                <span class="kv-key">Modelo de Facturación</span>
-                <span class="kv-val">MODELO FACTURACIÓN PREVIO</span>
+              <td colspan="2">
+                <span class="kv-key">Modelo y Transmisión:</span>
+                <span class="kv-val">FACTURACIÓN PREVIO / NORMAL</span>
               </td>
               <td>
-                <span class="kv-key">Tipo de Transmisión</span>
-                <span class="kv-val">TRANSMISIÓN NORMAL</span>
-              </td>
-              <td>
-                <span class="kv-key">Fecha y Hora de Generación</span>
+                <span class="kv-key">Fecha y Hora de Generación:</span>
                 <span class="kv-val"><%= date %></span>
               </td>
             </tr>
             <tr>
               <td>
-                <span class="kv-key">Código de Generación</span>
+                <span class="kv-key">Código de Generación:</span>
                 <span class="kv-val" style="font-family: monospace; font-size:9.5px;"><%= codigoGeneracion %></span>
               </td>
               <td>
-                <span class="kv-key">Versión de JSON</span>
+                <span class="kv-key">Versión de JSON:</span>
                 <span class="kv-val"><%= versionJson %></span>
               </td>
               <td>
-                <span class="kv-key">Número de Control</span>
+                <span class="kv-key">Número de Control:</span>
                 <span class="kv-val" style="font-family: monospace; font-size:9.5px;"><%= numeroControl %></span>
               </td>
             </tr>
             <tr>
               <td colspan="3" style="padding-top: 10px;">
-                <span class="kv-key">Sello de Recepción</span>
+                <span class="kv-key">Sello de Recepción:</span>
                 <span class="kv-val" style="font-family: monospace; font-size:9.5px; color: <%= primaryColor %>;"><%= selloRecibido %></span>
               </td>
             </tr>
@@ -371,43 +376,43 @@
       <table class="receptor-table">
         <tr>
           <td>
-            <span class="kv-key">Nombre o Razón Social</span>
+            <span class="kv-key">Nombre o Razón Social:</span>
             <span class="kv-val"><%= clientName %></span>
           </td>
           <td>
-            <span class="kv-key">Tipo de Documento</span>
+            <span class="kv-key">Tipo de Documento:</span>
             <span class="kv-val"><%= clientDocType %></span>
           </td>
           <td>
-            <span class="kv-key">N° Documento</span>
+            <span class="kv-key">N° Documento:</span>
             <span class="kv-val"><%= clientDoc %></span>
           </td>
         </tr>
         <tr>
           <td>
-            <span class="kv-key">NRC</span>
+            <span class="kv-key">NRC:</span>
             <span class="kv-val"><%= clientNrc %></span>
           </td>
           <td>
-            <span class="kv-key">Actividad Económica</span>
+            <span class="kv-key">Actividad Económica:</span>
             <span class="kv-val"><%= clientActividad %></span>
           </td>
           <td>
-            <span class="kv-key">Dirección</span>
+            <span class="kv-key">Dirección:</span>
             <span class="kv-val"><%= clientDir %></span>
           </td>
         </tr>
         <tr>
           <td>
-            <span class="kv-key">Nombre Comercial</span>
+            <span class="kv-key">Nombre Comercial:</span>
             <span class="kv-val"><%= clientComercial %></span>
           </td>
           <td>
-            <span class="kv-key">Correo Electrónico</span>
+            <span class="kv-key">Correo Electrónico:</span>
             <span class="kv-val"><%= clientEmail %></span>
           </td>
           <td>
-            <span class="kv-key">Teléfono</span>
+            <span class="kv-key">Teléfono:</span>
             <span class="kv-val"><%= clientPhone %></span>
           </td>
         </tr>
@@ -461,21 +466,17 @@
         </div>
         
         <div class="ext-title">OBSERVACIONES Y CONDICIONES</div>
-        <div class="ext-box">
-          <div class="mb-2"><span class="kv-key">Observaciones:</span> <span class="kv-val"><%= observaciones %></span></div>
-          <div><span class="kv-key">Condición de la Operación:</span> <span class="kv-val"><%= condicionOperacion %></span></div>
+        <div class="ext-box" style="display: flex; gap: 15px; margin-bottom: 10px;">
+          <div style="flex: 1;"><span class="kv-key">Observaciones:</span> <span class="kv-val"><%= observaciones %></span></div>
+          <div style="flex: 1;"><span class="kv-key">Condición de la Operación:</span> <span class="kv-val"><%= condicionOperacion %></span></div>
         </div>
 
-        <div class="ext-title">EXTENSIÓN</div>
-        <div class="ext-box" style="display: flex; justify-content: space-between;">
-          <div style="width: 48%;">
-            <div class="mb-2"><span class="kv-key">Nombre Entrega:</span> <span style="display:inline-block; width:100%; border-bottom: 1px solid #cbd5e1; height: 12px;"></span></div>
-            <div><span class="kv-key">N° Documento:</span> <span style="display:inline-block; width:100%; border-bottom: 1px solid #cbd5e1; height: 12px;"></span></div>
-          </div>
-          <div style="width: 48%;">
-            <div class="mb-2"><span class="kv-key">Nombre Recibe:</span> <span style="display:inline-block; width:100%; border-bottom: 1px solid #cbd5e1; height: 12px;"></span></div>
-            <div><span class="kv-key">N° Documento:</span> <span style="display:inline-block; width:100%; border-bottom: 1px solid #cbd5e1; height: 12px;"></span></div>
-          </div>
+        <div class="ext-title">EXTENSIÓN (RECEPCIÓN)</div>
+        <div class="ext-box" style="display: flex; gap: 10px; margin-bottom: 0;">
+          <div style="flex: 1;"><span class="kv-key">Entrega:</span> <div style="border-bottom: 1px solid #cbd5e1; height: 12px;"></div></div>
+          <div style="flex: 1;"><span class="kv-key">N° Doc:</span> <div style="border-bottom: 1px solid #cbd5e1; height: 12px;"></div></div>
+          <div style="flex: 1;"><span class="kv-key">Recibe:</span> <div style="border-bottom: 1px solid #cbd5e1; height: 12px;"></div></div>
+          <div style="flex: 1;"><span class="kv-key">N° Doc:</span> <div style="border-bottom: 1px solid #cbd5e1; height: 12px;"></div></div>
         </div>
       </div>
 
@@ -495,16 +496,11 @@
         </table>
 
         <table class="totals-table">
-          <tr><td class="label">Sumatoria de Ventas</td><td class="value">$<%= subtotal.toFixed(2) %></td></tr>
-          <tr><td class="label">Monto Descuento Ventas No Sujetas:</td><td class="value">$0.00</td></tr>
-          <tr><td class="label">Monto Descuento Ventas Exentas:</td><td class="value">$0.00</td></tr>
-          <tr><td class="label">Monto Descuento Ventas Gravadas:</td><td class="value">$0.00</td></tr>
-          <tr><td class="label">20 - Impuesto al Valor Agregado 13%:</td><td class="value" style="color: <%= secondaryColor %>;">$<%= iva.toFixed(2) %></td></tr>
+          <tr><td class="label">Sumatoria de Ventas:</td><td class="value">$<%= subtotal.toFixed(2) %></td></tr>
+          <tr><td class="label">Impuesto al Valor Agregado 13%:</td><td class="value" style="color: <%= secondaryColor %>;">$<%= iva.toFixed(2) %></td></tr>
           <tr><td class="label">Sub Total:</td><td class="value">$<%= subtotal.toFixed(2) %></td></tr>
           <tr><td class="label">(-) IVA Retenido:</td><td class="value" style="color: #ef4444;">$<%= ivaRetenido.toFixed(2) %></td></tr>
           <tr><td class="label">(-) Retención Renta:</td><td class="value" style="color: #ef4444;">$<%= retencionRenta.toFixed(2) %></td></tr>
-          <tr><td class="label">Monto Total de la Operación:</td><td class="value">$<%= montoTotalOperacion.toFixed(2) %></td></tr>
-          <tr><td class="label">Total Otros Montos No Afectos:</td><td class="value">$0.00</td></tr>
           <tr class="total-pagar-row"><td class="label">Total a Pagar:</td><td class="value">$<%= totalPagar.toFixed(2) %></td></tr>
         </table>
       </div>

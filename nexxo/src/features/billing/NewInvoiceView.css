@@ -4,17 +4,22 @@
   gap: 2rem;
   max-width: 1200px;
   margin: 0 auto;
+  animation: fadeIn 0.4s ease-out;
 }
 
 .view-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 8px;
 }
 
 .view-header h2 {
-  font-size: 1.5rem;
+  font-size: 22px;
   font-weight: 600;
+  background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .view-header .actions {
@@ -29,21 +34,27 @@
 }
 
 .panel-section {
-  padding: 2rem;
-  background: var(--bg-secondary);
-  border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+  padding: 24px;
+  background: var(--bg-panel);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-glass);
 }
 
 .panel-section h3 {
-  font-size: 1.1rem;
+  font-size: 15px;
   font-weight: 600;
-  margin-bottom: 1.5rem;
+  margin-bottom: 20px;
   color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .form-grid {
@@ -59,15 +70,17 @@
 
 .items-table th {
   text-align: left;
-  padding-bottom: 1rem;
-  color: var(--text-secondary);
-  font-weight: 500;
-  font-size: 0.85rem;
+  padding: 12px 0;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   border-bottom: 1px solid var(--border-color);
 }
 
 .items-table td {
-  padding: 1rem 0;
+  padding: 12px 0;
   vertical-align: middle;
 }
 
@@ -83,75 +96,82 @@
 
 .currency-input span {
   position: absolute;
-  left: 1rem;
-  color: var(--text-secondary);
+  left: 0.75rem;
+  color: var(--text-muted);
+  font-size: 13.5px;
 }
 
 .currency-input .antigravity-input {
-  padding-left: 2rem;
+  padding-left: 1.75rem;
 }
 
 .item-subtotal {
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-primary);
+  font-size: 14px;
 }
 
 .icon-button {
-  background: transparent;
-  border: none;
-  color: var(--text-tertiary);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
   cursor: pointer;
   padding: 0.5rem;
   border-radius: var(--radius-sm);
-  transition: all 0.2s;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .icon-button:hover {
-  background-color: var(--bg-tertiary);
+  background-color: rgba(255, 255, 255, 0.08);
   color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .icon-button.danger:hover {
-  color: var(--danger-color);
-  background-color: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  background-color: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.25);
 }
 
 .table-actions {
   margin-top: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .totals-section {
-  padding: 1.5rem 2rem;
+  padding: 24px;
   align-self: flex-end;
   min-width: 350px;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  background: var(--bg-secondary);
-  border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+  gap: 12px;
+  background: var(--bg-panel);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-glass);
 }
 
 .totals-row {
   display: flex;
   justify-content: space-between;
   color: var(--text-secondary);
-  font-size: 0.95rem;
+  font-size: 13.5px;
 }
 
 .totals-row.grand-total {
-  margin-top: 0.5rem;
-  padding-top: 1rem;
+  margin-top: 4px;
+  padding-top: 12px;
   border-top: 1px dashed var(--border-color);
-  color: var(--success-color);
-  font-size: 1.25rem;
+  color: var(--gold-primary);
+  font-size: 1.2rem;
   font-weight: 600;
+  text-shadow: 0 0 10px rgba(212, 175, 55, 0.15);
 }
 
 /* Spinners and Alerts (Antigravity UI) */
@@ -168,99 +188,41 @@
   display: flex;
   align-items: flex-start;
   gap: 1rem;
-  padding: 1.5rem;
-  margin-bottom: 0.5rem;
-  border-left: 4px solid;
+  padding: 16px;
+  margin-bottom: 12px;
+  border-radius: var(--radius-sm);
 }
 
 .alert-box.success {
-  border-left-color: var(--success-color);
-  background-color: rgba(16, 185, 129, 0.05);
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.15);
 }
 
 .alert-box.success .alert-icon {
-  color: var(--success-color);
+  color: #10b981;
 }
 
 .alert-box.error {
-  border-left-color: var(--danger-color);
-  background-color: rgba(239, 68, 68, 0.05);
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.15);
 }
 
 .alert-box.error .alert-icon {
-  color: var(--danger-color);
+  color: #ef4444;
 }
 
 .alert-content h4 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.1rem;
+  margin: 0 0 4px 0;
+  font-size: 14.5px;
+  font-weight: 600;
 }
 
 .alert-content p {
-  margin: 0.25rem 0;
-  font-size: 0.9rem;
+  margin: 0;
+  font-size: 13px;
   color: var(--text-secondary);
 }
 
 .alert-content p strong {
   color: var(--text-primary);
-}
-
-/* Nuevos inputs estilizados */
-.antigravity-input {
-  width: 100%;
-  padding: 0.6rem 0.75rem;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  font-size: 0.85rem;
-  color: var(--text-primary);
-  background-color: var(--bg-tertiary);
-  transition: border-color 0.2s;
-  box-sizing: border-box;
-}
-
-.antigravity-input:focus {
-  outline: none;
-  border-color: #d4af37;
-  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
-}
-
-/* Nuevos botones Blue/Gold */
-.antigravity-button {
-  background: linear-gradient(90deg, #0b1121 0%, #1e293b 100%);
-  color: #d4af37;
-  border: 1px solid #d4af37;
-  border-radius: 8px;
-  padding: 0.75rem 1.5rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.antigravity-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(11, 17, 33, 0.3);
-}
-
-.antigravity-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.antigravity-button.secondary {
-  background: transparent;
-  color: var(--text-secondary);
-  border: 1px solid var(--border-color);
-}
-
-.antigravity-label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  margin-bottom: 0.25rem;
-  display: block;
 }

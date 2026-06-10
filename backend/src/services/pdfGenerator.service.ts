@@ -23,7 +23,25 @@ export const generateInvoicePdf = async (invoiceData: any, settings: any, tenant
   const nexxusLogoPath = path.join(__dirname, '../../../nexxo/public/logo.png');
   let nexxusLogoUrl = '';
   if (fs.existsSync(nexxusLogoPath)) {
-    nexxusLogoUrl = `file://${nexxusLogoPath}`;
+    const base64 = fs.readFileSync(nexxusLogoPath).toString('base64');
+    nexxusLogoUrl = `data:image/png;base64,${base64}`;
+  }
+
+  let customLogoPath = '';
+  if (settings.logoUrl) {
+    // Intentamos resolver la ruta del logo subido, asumiendo que es relativa a la raíz del backend o workspace
+    const tryPath = path.join(process.cwd(), settings.logoUrl);
+    const tryPath2 = path.join(__dirname, '../../..', settings.logoUrl); // fallback si corre desde dist
+    if (fs.existsSync(tryPath)) customLogoPath = tryPath;
+    else if (fs.existsSync(tryPath2)) customLogoPath = tryPath2;
+  }
+
+  let logoUrlBase64 = '';
+  if (customLogoPath && fs.existsSync(customLogoPath)) {
+    const ext = path.extname(customLogoPath).toLowerCase();
+    const mime = ext === '.jpg' || ext === '.jpeg' ? 'image/jpeg' : ext === '.svg' ? 'image/svg+xml' : 'image/png';
+    const base64 = fs.readFileSync(customLogoPath).toString('base64');
+    logoUrlBase64 = `data:${mime};base64,${base64}`;
   }
 
   const codigoGeneracion = invoiceData.generationCode || invoiceData.id || '0F1C338C-E644-4D3E-A576-BB4C2AD807EA';
@@ -33,47 +51,47 @@ export const generateInvoicePdf = async (invoiceData: any, settings: any, tenant
 
   const templateData = {
     // ESTILOS
-    primaryColor: settings.primaryColor || '#000000',
-    secondaryColor: settings.secondaryColor || '#808080',
+    primaryColor: settings.primaryColor || '#1e40af',
+    secondaryColor: settings.secondaryColor || '#0f172a',
     qrCodeBase64: qrCodeBase64,
 
     // EMISOR
-    logoUrl: settings.logoUrl ? `http://localhost:3000${settings.logoUrl}` : '',
-    companyName: settings.companyName || tenant.businessName || 'G&G SOLUTIONS, SOCIEDAD POR ACCIONES SIMPLIFICADA DE CAPITAL VARIABLE',
-    emisorNombreComercial: settings.commercialName || settings.companyName || tenant.businessName || 'G&G SOLUTIONS, SOCIEDAD POR ACCIONES SIMPLIFICADA DE CAPITAL VARIABLE',
-    emisorActividad: settings.economicActivity || 'CONSULTORÍAS Y GESTIÓN DE SERVICIOS INFORMÁTICOS',
-    emisorNit: tenant.nit || settings.mhNit || '0614-100424-101-5',
-    emisorNrc: settings.nrc || tenant.nrc || '342043-9',
-    emisorEmail: settings.email || settings.smtpUser || 'rafaelgomez@ggsolutionssv.com',
-    emisorPhone: settings.phone || '7868-8228',
-    emisorDir: settings.address || 'CALLE ITSHUATAN, POLIGONO J -33, COLONIA JARDINES DE MERLIOT DISTRITO DE SANTA TECLA MUNICIPIO DE LA LIBERTAD SUR DEPARTAMENTO DE LA LIBERTAD',
+    logoUrl: logoUrlBase64,
+    companyName: settings.companyName || tenant.businessName || 'Empresa Emisora S.A. de C.V.',
+    emisorNombreComercial: settings.commercialName || settings.companyName || tenant.businessName || 'Empresa Emisora',
+    emisorActividad: settings.economicActivity || 'Venta de Productos y Servicios',
+    emisorNit: settings.mhNit || tenant.nit || '1234-567890-001-2',
+    emisorNrc: settings.nrc || tenant.nrc || '00000-0',
+    emisorEmail: settings.email || settings.smtpUser || 'info@empresa.com',
+    emisorPhone: settings.phone || '2222-2222',
+    emisorDir: settings.address || 'San Salvador, El Salvador',
     establecimiento: settings.establecimiento || 'M001',
     puntoVenta: settings.puntoVenta || 'P001',
     
     // DTE INFO
     codigoGeneracion: invoiceData.generationCode || invoiceData.id || '',
     numeroControl: invoiceData.controlNumber || '',
-    selloRecibido: invoiceData.status === 'PROCESSED' ? invoiceData.mhStamp : '',
+    selloRecibido: invoiceData.status === 'PROCESSED' ? (invoiceData.receptionStamp || invoiceData.mhStamp || '') : '',
     date: new Date(invoiceData.issueDate || new Date()).toLocaleString('es-SV', {
       day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'
     }),
     versionJson: '3',
 
     // RECEPTOR
-    clientName: invoiceData.customer?.name || 'SOCIEDAD DE AHORRO Y CREDITO MULTIMONEY, S.A.',
+    clientName: (invoiceData.customer?.name || 'Cliente de Contado').toUpperCase(),
     clientDocType: invoiceData.customer?.dui ? 'DUI' : 'NIT',
-    clientDoc: invoiceData.customer?.dui || invoiceData.customer?.nit || '0614-220313-102-0',
-    clientNrc: invoiceData.customer?.nrc || '224185-7',
-    clientActividad: invoiceData.customer?.economicActivityCode || invoiceData.customer?.activity || 'OTRAS ENTIDADES FINANCIERAS',
-    clientDir: invoiceData.customer?.address || 'BOULEVARD DEL HIPODROMO COLONIA SAN BENITO CENTRO COMERCIAL BAMBU ZONA ROSA NIVEL 3 OFICINAS, DISTRITO DE SAN SALVADOR, MUNICIPIO DE SAN SALVADOR CENTRO, DEPARTAMENTO DE SAN SALVADOR',
-    clientComercial: invoiceData.customer?.commercialName || '-',
-    clientEmail: invoiceData.customer?.email || 'sacmmsvfac@multimoney.com',
-    clientPhone: invoiceData.customer?.phone || '6182-6877',
+    clientDoc: invoiceData.customer?.dui || invoiceData.customer?.nit || '0000-000000-000-0',
+    clientNrc: invoiceData.customer?.nrc || '00000-0',
+    clientActividad: (invoiceData.customer?.economicActivityCode || invoiceData.customer?.activity || 'Consumidor Final').toUpperCase(),
+    clientDir: (invoiceData.customer?.address || 'San Salvador, El Salvador').toUpperCase(),
+    clientComercial: (invoiceData.customer?.commercialName || invoiceData.customer?.name || '-').toUpperCase(),
+    clientEmail: invoiceData.customer?.email || 'cliente@correo.com',
+    clientPhone: invoiceData.customer?.phone || '2222-2222',
 
     // ITEMS
     items: invoiceData.lines && invoiceData.lines.length > 0 ? invoiceData.lines.map((i: any, index: number) => ({
       num: index + 1,
-      description: i.product?.name || 'Producto',
+      description: i.description || i.product?.name || 'Producto',
       quantity: Number(i.quantity),
       unitName: 'Unidad',
       unitPrice: Number(i.historicalUnitPrice),

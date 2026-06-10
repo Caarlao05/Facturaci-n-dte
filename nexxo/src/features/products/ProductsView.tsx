@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Plus, Package, PackagePlus, Loader2 } from 'lucide-react';
 import axios from 'axios';
+import { EmptyState } from '../../components/ui/EmptyState';
 
 const ProductsView = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -132,19 +133,13 @@ const ProductsView = () => {
             </tbody>
           </table>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '64px 20px', textAlign: 'center' }}>
-            <div style={{ width: '64px', height: '64px', backgroundColor: 'rgba(0, 120, 212, 0.1)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
-              <Package size={32} color="var(--accent-blue)" />
-            </div>
-            <h3 style={{ fontSize: '18px', margin: '0 0 12px 0', color: 'var(--text-primary)' }}>Catálogo de Productos vacío</h3>
-            <p style={{ color: 'var(--text-secondary)', maxWidth: '500px', lineHeight: '1.5', margin: '0 0 24px 0' }}>
-              Aquí puedes registrar los bienes o servicios que comercializas, incluyendo códigos SKU, categorías e impuestos aplicables.
-            </p>
-            <button className="azure-btn" onClick={() => setIsModalOpen(true)}>
-              <PackagePlus size={16} style={{display: 'inline-block', verticalAlign: 'middle', marginRight: '6px'}} />
-              Agregar mi primer producto
-            </button>
-          </div>
+          <EmptyState 
+            icon={Package} 
+            title="Catálogo de Productos vacío" 
+            description="Aquí puedes registrar los bienes o servicios que comercializas, incluyendo códigos SKU, categorías e impuestos aplicables para facturar rápido." 
+            actionLabel="Agregar mi primer producto"
+            onAction={() => setIsModalOpen(true)}
+          />
         )}
       </div>
 

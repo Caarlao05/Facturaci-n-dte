@@ -49,6 +49,11 @@ const LoginView = () => {
 
   return (
     <div className="login-container">
+      {/* Sci-Fi Background Elements */}
+      <div className="login-grid-bg"></div>
+      <div className="hud-scanner"></div>
+      <div className="scanlines-overlay"></div>
+
       {/* Background Particles Simulation */}
       <div className="particles-overlay">
         {[...Array(12)].map((_, i) => (
@@ -59,10 +64,10 @@ const LoginView = () => {
       <div className="glass-panel">
         <div className="login-header">
           <div className="logo-pulse">
-            <img src="/logo.png" alt="Nexxus Logo" style={{ height: '90px', maxWidth: '100%', objectFit: 'contain' }} />
+            <img src="/logo.png" alt="Quantis Logo" className="login-logo-img" />
           </div>
-          <h2>Nexxo DTE</h2>
-          <p className="subtitle">Plataforma Avanzada de Facturación</p>
+          <h1>Bienvenido a Quantis</h1>
+          <p>Inicia sesión en tu entorno corporativo</p>
         </div>
 
         <form onSubmit={handleLogin} className="login-form">

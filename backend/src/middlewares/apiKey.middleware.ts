@@ -19,6 +19,9 @@ export const requireApiKey = async (req: ApiRequest, res: Response, next: NextFu
   }
 
   const token = authHeader.split(' ')[1];
+  if (!token) {
+    return res.status(401).json({ success: false, error: 'Token missing' });
+  }
   
   // En producción, aquí haríamos un hash SHA256 del token para comparar con la DB
   // Por ahora, asumiremos que guardamos la llave en 'keyHash' (Demo mode)

@@ -1,13 +1,13 @@
 {
-  "name": "nexxo-dte-unified",
+  "name": "quantis-dte-unified",
   "version": "1.0.0",
-  "description": "Sistema de Facturación Electrónica Nexxo DTE",
+  "description": "Sistema de Facturación Electrónica Quantis DTE (SaaS)",
   "scripts": {
-    "install:all": "npm install --prefix backend && npm install --prefix nexxo",
-    "build": "npm run build --prefix nexxo",
-    "start": "npm run start --prefix backend"
+    "postinstall": "npm install --prefix backend && npm install --prefix nexxo",
+    "build": "npm run build --prefix nexxo && npm run build --prefix backend",
+    "start": "node backend/dist/server.js"
   },
-  "author": "Nexxo",
+  "author": "Quantis",
   "license": "ISC",
   "dependencies": {
     "puppeteer": "^25.1.0"

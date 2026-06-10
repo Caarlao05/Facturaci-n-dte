@@ -1,30 +1,31 @@
 :root {
-  /* Liquid Glass Futuristic Theme Variables */
-  --bg-dark: #030408; 
-  --bg-dark-gradient: radial-gradient(circle at 50% 0%, #0c142e 0%, #030408 60%);
-  --bg-panel: rgba(16, 18, 26, 0.45); 
-  --bg-sidebar: rgba(10, 11, 18, 0.7);
-  --bg-header: rgba(10, 11, 18, 0.6);
+  /* Quantis Layout Variables - Dark Mode */
+  --bg-dark: #060913; 
+  --bg-dark-gradient: radial-gradient(circle at 30% 20%, #0c1224 0%, #060913 100%);
+  --bg-panel: rgba(12, 15, 29, 0.82); 
+  --bg-sidebar: rgba(6, 9, 19, 0.85);
+  --bg-header: rgba(6, 9, 19, 0.6);
+  --glass-blur: 5px;
   
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
   
-  --accent-blue: #00e5ff; 
-  --accent-hover: #00c3ff;
-  --accent-active: #0099cc;
+  --accent-blue: #3b82f6; 
+  --accent-hover: #2563eb;
+  --accent-active: #1d4ed8;
   
-  --border-color: rgba(0, 229, 255, 0.15);
+  --border-color: rgba(255, 255, 255, 0.08);
   --border-glass: rgba(255, 255, 255, 0.08);
-  --input-bg: rgba(0, 0, 0, 0.4);
+  --input-bg: rgba(255, 255, 255, 0.03);
   
   --success: #10b981;
   --warning: #f59e0b;
   --error: #ef4444; 
 
-  --sidebar-width: 250px;
+  --sidebar-width: 260px;
   --sidebar-collapsed-width: 48px;
-  --header-height: 60px;
+  --header-height: 64px;
 }
 
 body {
@@ -32,6 +33,7 @@ body {
   padding: 0;
   font-family: 'Outfit', sans-serif;
   background-color: var(--bg-dark);
+  background-image: var(--bg-dark-gradient);
   color: var(--text-primary);
   font-size: 14px;
 }
@@ -60,11 +62,11 @@ body {
 
 .top-header {
   height: var(--header-height);
-  background: rgba(10, 11, 18, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--border-glass);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  background: var(--bg-header);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -74,10 +76,12 @@ body {
 }
 
 .header-title h1 {
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 18px;
+  font-weight: 600;
   margin: 0;
-  color: var(--text-primary);
+  background: linear-gradient(135deg, #f8fafc 0%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   letter-spacing: 0.5px;
 }
 
@@ -91,21 +95,23 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 4px 12px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-glass);
-  transition: all 0.3s ease;
+  padding: 6px 16px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .user-profile:hover {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.1);
 }
 
 .user-name {
   font-size: 14px;
   font-weight: 500;
+  color: var(--text-primary);
 }
 
 .user-role {
@@ -113,18 +119,18 @@ body {
 }
 
 .avatar {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  border: 2px solid var(--border-glass);
+  border: 1px solid var(--border-glass);
 }
 
 .content-scroll {
   flex: 1;
   overflow-y: auto;
   padding: 24px;
-  /* Scrollbar estético */
 }
+
 .content-scroll::-webkit-scrollbar {
   width: 6px;
 }
@@ -132,80 +138,180 @@ body {
   background: transparent;
 }
 .content-scroll::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 3px;
 }
 
-/* Formularios Azure Style */
+/* Formularios Quantis Style */
 .azure-panel {
-  background: rgba(16, 18, 26, 0.7);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid var(--border-glass);
-  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4);
+  background: var(--bg-panel);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-glass);
   padding: 24px;
-  border-radius: 16px;
+  border-radius: var(--radius-md);
   position: relative;
   overflow: hidden;
 }
 
-.azure-panel::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-}
-
 .azure-input {
   background: var(--input-bg);
-  border: 1px solid var(--border-glass);
+  border: 1px solid var(--border-color);
   color: var(--text-primary);
-  padding: 10px 14px;
-  font-size: 14px;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.95rem;
   width: 100%;
-  border-radius: 8px;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: var(--radius-sm);
+  transition: all 0.3s ease;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+  outline: none;
 }
 
 .azure-input:focus {
-  outline: none;
   border-color: var(--accent-blue);
-  box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.15);
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.25);
 }
 
 .azure-btn {
-  background: linear-gradient(135deg, var(--accent-blue) 0%, #0099cc 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #7c3aed 100%);
   color: #fff;
   border: none;
-  padding: 10px 20px;
-  font-size: 14px;
+  padding: 0.65rem 1.4rem;
+  font-size: 0.95rem;
   font-weight: 500;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 15px rgba(0, 229, 255, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
 }
 
 .azure-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 229, 255, 0.4);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.5), 0 0 12px rgba(59, 130, 246, 0.3);
 }
 
 .azure-btn-secondary {
   background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(4px);
-  border: 1px solid var(--border-glass);
+  border: 1px solid var(--border-color);
   color: var(--text-primary);
-  border-radius: 8px;
-  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 1.4rem;
   font-weight: 500;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .azure-btn-secondary:hover {
   background: rgba(255, 255, 255, 0.1);
-  border-color: var(--accent-blue);
-  box-shadow: 0 0 15px rgba(0, 229, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Ambient Radial Glows (Optimizados Estáticos para Alto Rendimiento) */
+.ambient-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.08;
+}
+
+.glow-1 {
+  width: 500px;
+  height: 500px;
+  top: -100px;
+  left: 20%;
+  background: radial-gradient(circle, #3b82f6 0%, transparent 70%);
+}
+
+.glow-2 {
+  width: 600px;
+  height: 600px;
+  bottom: -150px;
+  right: 10%;
+  background: radial-gradient(circle, #7c3aed 0%, transparent 70%);
+}
+
+/* Page transitions inside Content Scroll */
+.content-scroll {
+  position: relative;
+  z-index: 1;
+}
+
+/* Smooth fade-in and slide for route transitions */
+.content-scroll > div {
+  animation: routeFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes routeFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Performance Mode Styles */
+body.perf-mode {
+  --glass-blur: 0px !important;
+  --bg-panel: #0c0f1d !important;
+  --bg-sidebar: #060913 !important;
+  --bg-header: #060913 !important;
+  --bg-dark-gradient: none !important;
+}
+
+body.perf-mode .ambient-glow {
+  display: none !important;
+}
+
+body.perf-mode * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Performance Mode Toggle Button */
+.perf-toggle-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.perf-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.perf-toggle-btn.active {
+  background: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.3);
+  color: #f59e0b;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.15);
+}
+
+@media (max-width: 640px) {
+  .perf-toggle-btn span {
+    display: none;
+  }
+  .perf-toggle-btn {
+    padding: 6px;
+    border-radius: 50%;
+  }
 }

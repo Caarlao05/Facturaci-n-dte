@@ -2,9 +2,7 @@ import { z } from 'zod';
 
 export const createCustomerSchema = z.object({
   body: z.object({
-    name: z.string({
-      required_error: "El nombre o razón social es obligatorio"
-    }).min(2, "El nombre debe tener al menos 2 caracteres"),
+    name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
     
     commercialName: z.string().optional().nullable(),
     
@@ -27,23 +25,13 @@ export const createCustomerSchema = z.object({
 
 export const createProductSchema = z.object({
   body: z.object({
-    code: z.string({
-      required_error: "El código es obligatorio"
-    }).min(1, "El código no puede estar vacío"),
+    code: z.string().min(1, "El código no puede estar vacío"),
     
-    description: z.string({
-      required_error: "La descripción es obligatoria"
-    }).min(2, "La descripción debe tener al menos 2 caracteres"),
+    description: z.string().min(2, "La descripción debe tener al menos 2 caracteres"),
     
-    unitPrice: z.number({
-      required_error: "El precio unitario es obligatorio",
-      invalid_type_error: "El precio debe ser un número"
-    }).min(0, "El precio no puede ser negativo"),
+    unitPrice: z.number().min(0, "El precio no puede ser negativo"),
     
-    taxType: z.enum(['IVA', 'EXENTO', 'NO_SUJETO'], {
-      required_error: "El tipo de tributo es obligatorio",
-      invalid_type_error: "El tipo de tributo debe ser IVA, EXENTO o NO_SUJETO"
-    }),
+    taxType: z.enum(['IVA', 'EXENTO', 'NO_SUJETO']),
     
     isActive: z.boolean().optional()
   })

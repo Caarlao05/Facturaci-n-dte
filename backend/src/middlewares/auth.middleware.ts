@@ -13,7 +13,7 @@ export const requireAuth = (req: Request, res: Response, next: NextFunction) => 
   const token = authHeader.split(' ')[1];
 
   try {
-    const payload: any = jwt.verify(token, JWT_SECRET);
+    const payload: any = jwt.verify(token as string, JWT_SECRET as string);
     const xTenantId = req.headers['x-tenant-id'];
 
     // Validar aislamiento de tenants (Si no es SUPERADMIN, debe proveer un X-Tenant-Id válido y coincidente)
@@ -26,7 +26,7 @@ export const requireAuth = (req: Request, res: Response, next: NextFunction) => 
       }
     }
 
-    (req as any).user = payload;
+    req.user = payload;
     next();
   } catch (error) {
     return res.status(401).json({ success: false, error: 'Token de autenticación inválido o expirado.' });

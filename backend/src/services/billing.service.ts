@@ -20,6 +20,7 @@ export const processNewInvoice = async (customerRecord: any, items: any[], dteTy
         const lineSubtotal = item.qty * item.price;
         subTotal += lineSubtotal;
         return {
+          description: item.desc,
           quantity: item.qty,
           historicalUnitPrice: item.price,
           subtotal: lineSubtotal
@@ -47,6 +48,13 @@ export const processNewInvoice = async (customerRecord: any, items: any[], dteTy
       const padCorrelativo = String(seqCorrelativo).padStart(15, '0');
       const numeroControl = `DTE-${tipoDteCode}-S001P001-${padCorrelativo}`;
 
+      let tenantSettings = null;
+      let tenant = null;
+      if (tenantId) {
+        tenantSettings = await tx.tenantSettings.findUnique({ where: { tenantId } });
+        tenant = await tx.tenant.findUnique({ where: { id: tenantId } });
+      }
+
       // 2. Generate JSON payload for DTE
       const totals = { subTotal, totalTaxes, montoTotalOperacion, ivaRete1, renta, totalPagar };
       const dtePayload = buildDTEPayload(
@@ -56,7 +64,9 @@ export const processNewInvoice = async (customerRecord: any, items: any[], dteTy
         items, 
         generationCode, 
         numeroControl, 
-        totals
+        totals,
+        tenant,
+        tenantSettings
       );
 
       // 3. Sign Document (MH Firmador Real / Simulado)
@@ -75,11 +85,12 @@ export const processNewInvoice = async (customerRecord: any, items: any[], dteTy
           customerId: customerRecord.id,
           tenantId: tenantId || null,
           generationCode: mhResponse.generationCode,
+          controlNumber: numeroControl,
           receptionStamp: mhResponse.receptionStamp,
           totalAmount: totalAmount,
           totalTaxes: totalTaxes,
           issueDate: new Date(),
-          status: 'APPROVED',
+          status: 'PROCESSED',
           lines: {
             create: invoiceLinesData
           }
@@ -104,12 +115,7 @@ export const processNewInvoice = async (customerRecord: any, items: any[], dteTy
       
       const pdfPath = path.join(tempDir, `${generationCode}.pdf`);
       
-      let tenantSettings = null;
-      let tenant = null;
-      if (tenantId) {
-        tenantSettings = await tx.tenantSettings.findUnique({ where: { tenantId } });
-        tenant = await tx.tenant.findUnique({ where: { id: tenantId } });
-      }
+      // Las queries de tenant y tenantSettings ya se hicieron arriba
 
       const invoiceForPdf = {
         id: newInvoice.id,
@@ -124,10 +130,14 @@ export const processNewInvoice = async (customerRecord: any, items: any[], dteTy
           dui: (customerRecord as any).dui,
           nrc: customerRecord.nrc,
           email: customerRecord.email,
-          activity: customerRecord.economicActivityCode
+          activity: customerRecord.economicActivityCode,
+          address: customerRecord.address,
+          phone: customerRecord.phone,
+          commercialName: customerRecord.commercialName
         },
         lines: items.map(item => ({
           product: { name: item.desc },
+          description: item.desc,
           quantity: item.qty,
           historicalUnitPrice: item.price
         }))
@@ -150,7 +160,20 @@ export const processNewInvoice = async (customerRecord: any, items: any[], dteTy
 
       // 9. Send Email
       const destinationEmail = customerEmail || customerRecord.email || 'info@cliente.com';
-      await sendDTEEmail(destinationEmail, customerRecord.id, generationCode, pdfPath, JSON.stringify(dtePayload, null, 2), "N/A");
+      const companyName = tenantSettings?.companyName || tenant?.businessName || 'Empresa Emisora';
+      const logoUrl = tenantSettings?.logoUrl || undefined;
+
+      await sendDTEEmail(
+        destinationEmail, 
+        customerRecord.name, 
+        generationCode, 
+        pdfPath, 
+        JSON.stringify(dtePayload, null, 2), 
+        "N/A",
+        companyName,
+        logoUrl,
+        tenantSettings
+      );
 
       return { ...newInvoice, pdfBlobUrl, jsonPayload: dtePayload };
     }, { timeout: 30000, maxWait: 10000 });

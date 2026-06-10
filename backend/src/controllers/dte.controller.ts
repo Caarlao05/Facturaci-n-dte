@@ -92,7 +92,7 @@ export const invalidateInvoice = async (req: Request, res: Response) => {
     const { id } = req.params;
     const { reason, responsibleName } = req.body;
     
-    const result = await invalidateDte(id, reason, responsibleName);
+    const result = await invalidateDte(id as string, reason, responsibleName);
     res.json({ success: true, data: result });
   } catch (error: any) {
     res.status(400).json({ success: false, error: error.message });
@@ -108,7 +108,7 @@ export const downloadInvoicePdf = async (req: Request, res: Response) => {
     }
 
     const invoice = await prisma.invoice.findFirst({
-      where: { id, tenantId: user.tenantId },
+      where: { id: id as string, tenantId: user.tenantId },
       include: {
         customer: true,
         lines: {
@@ -129,7 +129,7 @@ export const downloadInvoicePdf = async (req: Request, res: Response) => {
     const pdfBuffer = await generateInvoicePdf(invoice, settings || {});
 
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename=DTE_${invoice.numeroControl || invoice.id}.pdf`);
+    res.setHeader('Content-Disposition', `attachment; filename=DTE_${invoice.id}.pdf`);
     res.send(pdfBuffer);
 
   } catch (error: any) {
@@ -144,7 +144,7 @@ export const downloadInvoiceJson = async (req: Request, res: Response) => {
     const user = (req as any).user;
 
     const invoice = await prisma.invoice.findFirst({
-      where: { id, tenantId: user.tenantId },
+      where: { id: id as string, tenantId: user.tenantId },
       include: {
         customer: true,
         lines: {

@@ -13,12 +13,25 @@ import ProductsView from './features/products/ProductsView';
 import ReportsView from './features/reports/ReportsView';
 import LoginView from './features/auth/LoginView';
 import LogoutModal from './components/ui/LogoutModal';
-import { Bell } from 'lucide-react';
+import { GlobalHelpButton } from './components/ui/HelpCenterModal';
+import { Bell, Zap, ZapOff } from 'lucide-react';
 import './App.css';
 
 const ProtectedLayout = () => {
   const [user, setUser] = useState<any>(null);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [performanceMode, setPerformanceMode] = useState(() => {
+    return localStorage.getItem('perf-mode') === 'true';
+  });
+
+  useEffect(() => {
+    if (performanceMode) {
+      document.body.classList.add('perf-mode');
+    } else {
+      document.body.classList.remove('perf-mode');
+    }
+    localStorage.setItem('perf-mode', performanceMode.toString());
+  }, [performanceMode]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -94,13 +107,23 @@ const ProtectedLayout = () => {
 
   return (
     <div className="app-container">
+      <div className="ambient-glow glow-1"></div>
+      <div className="ambient-glow glow-2"></div>
       <Sidebar role={user?.role} onLogout={() => setIsLogoutModalOpen(true)} />
       <main className="main-content">
         <header className="top-header">
           <div className="header-title">
-            <h1>Nexxo DTE Service</h1>
+            <h1 style={{ fontWeight: 600, color: 'var(--text-primary)' }}>Quantis Billing</h1>
           </div>
           <div className="header-right">
+            <button 
+              onClick={() => setPerformanceMode(!performanceMode)} 
+              className={`perf-toggle-btn ${performanceMode ? 'active' : ''}`}
+              title={performanceMode ? "Desactivar Modo Rendimiento (Efectos Visuales)" : "Activar Modo Rendimiento (Optimizar Velocidad)"}
+            >
+              {performanceMode ? <Zap size={15} /> : <ZapOff size={15} />}
+              <span>{performanceMode ? 'Rendimiento' : 'Efectos'}</span>
+            </button>
             <Bell size={16} color="var(--text-secondary)" style={{marginRight: '8px', cursor: 'pointer'}} />
             <div className="user-profile" style={{cursor: 'pointer'}} onClick={() => setIsLogoutModalOpen(true)}>
               <div className="user-info" style={{textAlign: 'right'}}>
@@ -130,6 +153,7 @@ const ProtectedLayout = () => {
         onClose={() => setIsLogoutModalOpen(false)} 
         onConfirm={handleLogout} 
       />
+      <GlobalHelpButton />
     </div>
   );
 };

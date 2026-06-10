@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Send, Save, CheckCircle, FileText, Code, AlertCircle, Loader2 } from 'lucide-react';
 import axios from 'axios';
+import { Tooltip } from '../../components/ui/Tooltip';
 import './NewInvoiceView.css';
 
 const NewInvoiceView = () => {
@@ -143,10 +144,11 @@ const NewInvoiceView = () => {
     <div className="invoice-view">
       <div className="view-header">
         <h2>Crear Nuevo Cobro</h2>
-        <div className="actions">
-          <select 
-            className="antigravity-input" 
-            style={{ width: 'auto', border: '1px solid var(--border-color)', background: 'var(--bg-primary)' }}
+        <div className="actions" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <select 
+              className="antigravity-input" 
+              style={{ width: 'auto', border: '1px solid var(--border-color)', background: 'var(--bg-primary)' }}
             value={dteType}
             onChange={(e) => setDteType(e.target.value)}
             disabled={isLoading}
@@ -160,6 +162,8 @@ const NewInvoiceView = () => {
             <option value="14">Factura de Sujeto Excluido (14)</option>
             <option value="15">Comprobante de Donación (15)</option>
           </select>
+          <Tooltip content="Selecciona el tipo de documento. Ej: Factura (01) para consumidor final, CCF (03) para contribuyentes con NRC." />
+          </div>
           <button className="antigravity-button secondary" onClick={handleSaveDraft} disabled={isLoading}>
             <Save size={18} />
             Guardar Borrador
@@ -267,7 +271,10 @@ const NewInvoiceView = () => {
           <div className="form-grid">
             {dteType === '14' ? (
               <div className="form-group">
-                <label className="antigravity-label">DUI <span style={{color: 'var(--danger-color)'}}>*</span></label>
+                <label className="antigravity-label">
+                  DUI <span style={{color: 'var(--danger-color)'}}>*</span>
+                  <Tooltip content="El DUI es obligatorio para Factura de Sujeto Excluido para aplicar la retención de Renta del 10%." size={14} />
+                </label>
                 <input type="text" className="antigravity-input" placeholder="00000000-0" disabled={isLoading} value={customer.dui} onChange={(e) => handleCustomerChange('dui', e.target.value)} />
               </div>
             ) : (
@@ -286,13 +293,14 @@ const NewInvoiceView = () => {
 
             <div className="form-group">
               <label className="antigravity-label">Nombre Comercial</label>
-              <input type="text" className="antigravity-input" placeholder="G&G Solutions" disabled={isLoading} value={customer.nombreComercial || ''} onChange={(e) => handleCustomerChange('nombreComercial', e.target.value)} />
+              <input type="text" className="antigravity-input" placeholder="Ej. Nombre Comercial del Cliente" disabled={isLoading} value={customer.nombreComercial || ''} onChange={(e) => handleCustomerChange('nombreComercial', e.target.value)} />
             </div>
             
             {['03', '05', '06'].includes(dteType) && (
               <div className="form-group">
                 <label className="antigravity-label">
                   NRC <span style={{color: 'var(--danger-color)'}}>*</span>
+                  <Tooltip content="Número de Registro de Contribuyente (ej: 123456-7). Es obligatorio para CCF." size={14} />
                 </label>
                 <input type="text" className="antigravity-input" placeholder="Número de Registro" disabled={isLoading} value={customer.nrc} onChange={(e) => handleCustomerChange('nrc', e.target.value)} />
               </div>
@@ -329,7 +337,9 @@ const NewInvoiceView = () => {
                 <input type="text" className="antigravity-input" placeholder="Ej. HND, GTM, USA" disabled={isLoading} value={customer.paisDestino} onChange={(e) => handleCustomerChange('paisDestino', e.target.value.toUpperCase())} />
               </div>
               <div className="form-group">
-                <label className="antigravity-label">Condiciones de Entrega (Incoterms) <span style={{color: 'var(--danger-color)'}}>*</span></label>
+                <label className="antigravity-label">Condiciones de Entrega (Incoterms) <span style={{color: 'var(--danger-color)'}}>*</span>
+                  <Tooltip content="Términos de comercio internacional que definen responsabilidades. (Ej: FOB, CIF)" size={14} />
+                </label>
                 <select className="antigravity-input" disabled={isLoading} value={customer.incoterm} onChange={(e) => handleCustomerChange('incoterm', e.target.value)}>
                   <option value="">-- Seleccionar --</option>
                   <option value="EXW">EXW - En Fábrica</option>
@@ -348,7 +358,9 @@ const NewInvoiceView = () => {
             <h3>Documento Relacionado (Para Notas de Crédito/Débito)</h3>
             <div className="form-grid">
               <div className="form-group">
-                <label className="antigravity-label">Código de Generación (UUID Original) <span style={{color: 'var(--danger-color)'}}>*</span></label>
+                <label className="antigravity-label">Código de Generación (UUID Original) <span style={{color: 'var(--danger-color)'}}>*</span>
+                  <Tooltip content="El código de generación de la factura original que estás modificando o anulando." size={14} />
+                </label>
                 <input type="text" className="antigravity-input" placeholder="XXXX-XXXX-XXXX-XXXX" disabled={isLoading} value={customer.docRelacionado} onChange={(e) => handleCustomerChange('docRelacionado', e.target.value)} />
               </div>
               <div className="form-group">

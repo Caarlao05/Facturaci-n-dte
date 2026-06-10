@@ -47,14 +47,16 @@ export const getDashboardData = async (req: Request, res: Response) => {
 
     const recentDtes = invoices.slice(0, 5).map(inv => ({
       uuid: inv.id,
-      id: inv.generationCode || inv.id.split('-')[0].toUpperCase(),
+      id: inv.generationCode || (inv.id ? (inv.id.split('-')[0] || '').toUpperCase() : ''),
       client: inv.customer?.name || 'Cliente General',
       clientDoc: inv.customer?.nit || inv.customer?.dui || 'N/A',
       date: new Date(inv.issueDate).toLocaleDateString('es-SV'),
       amount: Number(inv.totalAmount || 0),
-      subtotal: Number(inv.subtotal || 0),
+      subtotal: Number(inv.totalAmount || 0) - Number(inv.totalTaxes || 0),
       taxes: Number(inv.totalTaxes || 0),
-      status: inv.status === 'PROCESSED' ? 'Transmitido' : (inv.status === 'ERROR' ? 'Rechazado' : 'Pendiente'),
+      status: inv.status === 'PROCESSED' ? 'Transmitido' : 
+              (inv.status === 'ERROR' ? 'Rechazado' : 
+              (inv.status === 'INVALIDATED' ? 'Anulado' : 'Pendiente')),
       items: inv.lines ? inv.lines.map((it: any) => ({
         desc: it.product?.name || 'Item General',
         qty: Number(it.quantity),
@@ -71,7 +73,7 @@ export const getDashboardData = async (req: Request, res: Response) => {
     }));
 
     // Reemplazamos el último día con las ventas reales de hoy
-    if (sparklineData.length > 0) {
+    if (sparklineData.length > 6 && sparklineData[6]) {
       sparklineData[6].value = ventasDelDia || 150;
     }
 

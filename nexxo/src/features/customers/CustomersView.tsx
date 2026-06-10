@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Plus, UserPlus, Users, Loader2 } from 'lucide-react';
 import axios from 'axios';
+import { EmptyState } from '../../components/ui/EmptyState';
 
 const CustomersView = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -25,7 +26,7 @@ const CustomersView = () => {
     setIsLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:3000/api/customers', {
+      const response = await axios.get('/api/customers', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setCustomers(response.data);
@@ -50,7 +51,7 @@ const CustomersView = () => {
     setIsSubmitting(true);
     try {
       const token = localStorage.getItem('token');
-      await axios.post('http://localhost:3000/api/customers', formData, {
+      await axios.post('/api/customers', formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setIsModalOpen(false);
@@ -58,15 +59,20 @@ const CustomersView = () => {
         name: '', commercialName: '', nit: '', nrc: '', dui: '', email: '', phone: '', address: '', economicActivityCode: ''
       });
       fetchCustomers();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating customer:', error);
-      alert('Error al crear el cliente');
+      const details = error.response?.data?.details;
+      if (details && Array.isArray(details)) {
+        alert('Error de validación:\n' + details.map((d: any) => `- ${d.message}`).join('\n'));
+      } else {
+        alert(error.response?.data?.error || 'Error al crear el cliente');
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const filteredCustomers = customers.filter(c => 
+  const filteredCustomers = (Array.isArray(customers) ? customers : []).filter(c => 
     c.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     c.nit?.includes(searchTerm) ||
     c.nrc?.includes(searchTerm) ||
@@ -135,19 +141,13 @@ const CustomersView = () => {
             </tbody>
           </table>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '64px 20px', textAlign: 'center' }}>
-            <div style={{ width: '64px', height: '64px', backgroundColor: 'rgba(0, 120, 212, 0.1)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
-              <Users size={32} color="var(--accent-blue)" />
-            </div>
-            <h3 style={{ fontSize: '18px', margin: '0 0 12px 0', color: 'var(--text-primary)' }}>No hay clientes encontrados</h3>
-            <p style={{ color: 'var(--text-secondary)', maxWidth: '500px', lineHeight: '1.5', margin: '0 0 24px 0' }}>
-              El Directorio de Clientes te permite guardar los datos de facturación (Nombre, NIT, NRC, Correo) de tus compradores frecuentes.
-            </p>
-            <button className="azure-btn" onClick={() => setIsModalOpen(true)}>
-              <UserPlus size={16} style={{display: 'inline-block', verticalAlign: 'middle', marginRight: '6px'}} />
-              Registrar mi primer cliente
-            </button>
-          </div>
+          <EmptyState 
+            icon={Users} 
+            title="Aún no tienes clientes" 
+            description="El Directorio te permite guardar los datos de facturación (Nombre, NIT, NRC, Correo) de tus compradores frecuentes para emitir facturas más rápido." 
+            actionLabel="Registrar mi primer cliente"
+            onAction={() => setIsModalOpen(true)}
+          />
         )}
       </div>
 

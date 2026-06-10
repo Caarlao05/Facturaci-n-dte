@@ -6,9 +6,11 @@ import { requireAuth } from './middlewares/auth.middleware';
 import { createInitialUser } from './services/auth.service';
 import { getDteDashboard, invalidateInvoice, processBatchDte, processBatchSingle } from './controllers/dte.controller';
 import { emitSaaSDte } from './controllers/b2b.controller';
-import { getSettings, updateSettings, uploadLogo } from './controllers/settings.controller';
-import { getAllTenants, createTenant } from './controllers/superadmin.controller';
+import { getSettings, updateSettings, uploadLogo, uploadCertificate } from './controllers/settings.controller';
+import { getSalesReport, getPurchasesReport } from './controllers/reports.controller';
+import { getAllTenants, createTenant, getAllUsers, updateTenant, deleteTenant, rechargeQuota, impersonateTenant, getGlobalAnalytics } from './controllers/superadmin.controller';
 import { getCustomers, createCustomer, getProducts, createProduct } from './controllers/catalog.controller';
+import { getPurchases, importPurchase } from './controllers/purchases.controller';
 import { requireApiKey } from './middlewares/apiKey.middleware';
 import multer from 'multer';
 
@@ -46,11 +48,18 @@ app.post('/api/invoices', requireAuth, createInvoice);
 app.get('/api/invoices/:id/pdf', requireAuth, require('./controllers/dte.controller').downloadInvoicePdf);
 app.get('/api/invoices/:id/json', requireAuth, require('./controllers/dte.controller').downloadInvoiceJson);
 app.get('/api/settings', requireAuth, getSettings);
-app.put('/api/settings', requireAuth, updateSettings);
+app.post('/api/settings', requireAuth, updateSettings);
 app.post('/api/settings/logo', requireAuth, upload.single('logo'), uploadLogo);
+app.post('/api/settings/cert', requireAuth, upload.single('certFile'), uploadCertificate);
 
 app.get('/api/superadmin/tenants', requireAuth, getAllTenants);
 app.post('/api/superadmin/tenants', requireAuth, createTenant);
+app.put('/api/superadmin/tenants/:id', requireAuth, updateTenant);
+app.delete('/api/superadmin/tenants/:id', requireAuth, deleteTenant);
+app.post('/api/superadmin/tenants/:id/recharge', requireAuth, rechargeQuota);
+app.post('/api/superadmin/tenants/:id/impersonate', requireAuth, impersonateTenant);
+app.get('/api/superadmin/users', requireAuth, getAllUsers);
+app.get('/api/superadmin/analytics', requireAuth, getGlobalAnalytics);
 
 // Catálogos (Clientes y Productos)
 import { validate } from './middlewares/validate.middleware';
@@ -67,7 +76,7 @@ app.get('/api/health', (req, res) => {
 
 // Rutas ERP - Gestión DTE (Fase 6)
 app.get('/api/dte', getDteDashboard);
-app.post('/api/dte/:id/invalidate', invalidateInvoice);
+app.post('/api/dte/:id/invalidate', requireAuth, invalidateInvoice);
 app.post('/api/dte/batch', processBatchDte);
 app.post('/api/dte/batch-single', requireAuth, require('./controllers/dte.controller').processBatchSingle);
 
@@ -76,6 +85,14 @@ app.get('/api/dashboard', requireAuth, require('./controllers/dashboard.controll
 
 // Rutas B2B SaaS Pública (Fase 8)
 app.post('/api/v1/dte/emit', requireApiKey, emitSaaSDte);
+
+// Compras DTE (Buzón Tributario)
+app.get('/api/purchases', requireAuth, getPurchases);
+app.post('/api/purchases/import', requireAuth, upload.single('json'), importPurchase);
+
+// Reportes (Libros de IVA)
+app.get('/api/reports/sales', requireAuth, getSalesReport);
+app.get('/api/reports/purchases', requireAuth, getPurchasesReport);
 
 // ==========================================
 // UNIFICACIÓN: Servir Frontend (Nexxo)

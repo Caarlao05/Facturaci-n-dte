@@ -1,13 +1,23 @@
 import prisma from '../lib/prisma';
 
-export const receiveSupplierInvoice = async (payload: any) => {
+export const receiveSupplierInvoice = async (payload: any, tenantId: string) => {
   // Validamos que sea un JSON válido de Hacienda
   if (!payload || !payload.identificacion || !payload.identificacion.codigoGeneracion) {
     throw new Error("Formato DTE inválido");
   }
 
+  // Revisar si ya existe
+  const existing = await prisma.receivedInvoice.findUnique({
+    where: { generationCode: payload.identificacion.codigoGeneracion }
+  });
+
+  if (existing) {
+    throw new Error("Este DTE ya fue importado previamente.");
+  }
+
   const newReceivedInvoice = await prisma.receivedInvoice.create({
     data: {
+      tenantId, // Guardar bajo la empresa actual
       generationCode: payload.identificacion.codigoGeneracion,
       receptionStamp: payload.selloRecibido || 'PENDING',
       supplierNit: payload.emisor.nit,

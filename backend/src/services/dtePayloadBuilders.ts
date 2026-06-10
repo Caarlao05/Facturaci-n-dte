@@ -5,7 +5,9 @@ export const buildDTEPayload = (
   items: any[],
   generationCode: string,
   numeroControl: string,
-  totals: any
+  totals: any,
+  tenant: any = {},
+  tenantSettings: any = {}
 ): any => {
   const commonIdentificacion = {
     version: dteType === '14' ? 1 : 3, // Simplificación
@@ -18,24 +20,24 @@ export const buildDTEPayload = (
     tipoContingencia: null,
     motivoContin: null,
     fecEmi: new Date().toISOString().split('T')[0],
-    horEmi: new Date().toISOString().split('T')[1].substring(0,8),
+    horEmi: new Date().toISOString().split('T')[1]?.substring(0,8) || "00:00:00",
     tipoMoneda: "USD"
   };
 
   const commonEmisor = {
-    nit: "06141004241015",
-    nrc: "3420439",
-    nombre: "G&G SOLUTIONS, SOCIEDAD POR ACCIONES SIMPLIFICADA DE CAPITAL VARIABLE",
-    nombreComercial: "G&G SOLUTIONS",
-    codActividad: "62020",
-    descActividad: "Consultorías y gestión de servicios informáticos",
-    codEstable: "M001",
-    codEstableMH: "M001",
-    codPuntoVenta: "1",
-    codPuntoVentaMH: "P001",
-    direccion: { departamento: "05", municipio: "28", complemento: "CALLE ITSHUATAN, POLIGONO J -33" },
-    telefono: "78688228",
-    correo: "rafaelgomez@ggsolutionssv.com",
+    nit: (tenantSettings?.mhNit || tenant?.nit || "06141004241015").replace(/-/g, ''),
+    nrc: tenantSettings?.nrc || tenant?.nrc || "3420439",
+    nombre: tenantSettings?.companyName || tenant?.businessName || "Empresa Emisora S.A.",
+    nombreComercial: tenantSettings?.commercialName || "Empresa Comercial",
+    codActividad: tenantSettings?.economicActivity || "10005",
+    descActividad: "Actividad Económica",
+    codEstable: tenantSettings?.establecimiento || "M001",
+    codEstableMH: tenantSettings?.establecimiento || "M001",
+    codPuntoVenta: tenantSettings?.puntoVenta || "1",
+    codPuntoVentaMH: tenantSettings?.puntoVenta ? `P${tenantSettings.puntoVenta.padStart(3, '0')}` : "P001",
+    direccion: { departamento: "06", municipio: "14", complemento: tenantSettings?.address || "San Salvador, El Salvador" },
+    telefono: tenantSettings?.phone || "22222222",
+    correo: tenantSettings?.email || "info@empresa.com",
     tipoEstablecimiento: "02"
   };
 
@@ -49,9 +51,13 @@ export const buildDTEPayload = (
         nombre: customerRecord.name,
         codActividad: customerRecord.economicActivityCode || "10005",
         descActividad: "Servicios Varios",
-        direccion: { departamento: "06", municipio: "14", complemento: "San Salvador" },
-        telefono: "22222222",
-        correo: customerEmail || "sujeto@excluido.com"
+        direccion: { 
+          departamento: customerRecord.departamento || "06", 
+          municipio: customerRecord.municipio || "14", 
+          complemento: customerRecord.address || "San Salvador" 
+        },
+        telefono: customerRecord.phone || "22222222",
+        correo: customerEmail || customerRecord.email || "sujeto@excluido.com"
       },
       cuerpoDocumento: items.map((item, idx) => ({
         numItem: idx + 1,
@@ -87,12 +93,16 @@ export const buildDTEPayload = (
       nit: (customerRecord.nit || "00000000000000").replace(/-/g, ''),
       nrc: customerRecord.nrc || null,
       nombre: customerRecord.name,
-      nombreComercial: null,
+      nombreComercial: customerRecord.commercialName || null,
       codActividad: customerRecord.economicActivityCode || "64199",
       descActividad: "Otras actividades",
-      direccion: { departamento: "06", municipio: "23", complemento: "SAN SALVADOR" },
-      telefono: "22222222",
-      correo: customerEmail || "receptor@cliente.com"
+      direccion: { 
+        departamento: customerRecord.departamento || "06", 
+        municipio: customerRecord.municipio || "14", 
+        complemento: customerRecord.address || "San Salvador" 
+      },
+      telefono: customerRecord.phone || "22222222",
+      correo: customerEmail || customerRecord.email || "receptor@cliente.com"
     },
     cuerpoDocumento: items.map((item, idx) => ({
       numItem: idx + 1,
@@ -155,6 +165,7 @@ export const buildDTEPayload = (
     dtePayload.identificacion.version = 1;
     dtePayload.receptor.tipoDocumento = "36"; // NIT
     dtePayload.receptor.numDocumento = dtePayload.receptor.nit;
+    dtePayload.receptor.nrc = null; // En FCF no se debe mandar NRC
   }
 
   // Ajustes de Exportación (11)

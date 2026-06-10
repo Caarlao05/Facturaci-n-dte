@@ -109,6 +109,7 @@ model Invoice {
   issueDate        DateTime
   status           String
   pdfBlobUrl       String?
+  controlNumber    String?
   createdAt        DateTime           @default(now())
   customer         Customer           @relation(fields: [customerId], references: [id])
   tenant           Tenant?            @relation(fields: [tenantId], references: [id])
@@ -124,6 +125,7 @@ model InvoiceLine {
   id                  String   @id @default(uuid())
   invoiceId           String
   productId           String?
+  description         String?  @db.Text
   quantity            Decimal  @db.Decimal(10, 2)
   historicalUnitPrice Decimal  @db.Decimal(10, 2)
   subtotal            Decimal  @db.Decimal(10, 2)
@@ -163,6 +165,8 @@ model TenantSettings {
   logoUrl         String?
   mhNit           String?
   mhApiPassword   String?
+  mhCertPath      String?
+  mhCertPassword  String?
   wompiPublicKey  String?
   wompiPrivateKey String?
   smtpHost        String?

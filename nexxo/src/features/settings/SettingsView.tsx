@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Save, Shield, Mail, Building, Loader2, CheckCircle } from 'lucide-react';
+import { Tooltip } from '../../components/ui/Tooltip';
 import './SettingsView.css';
 
 const SettingsView = () => {
@@ -19,19 +20,22 @@ const SettingsView = () => {
     puntoVenta: 'P001',
     nrc: '',
     email: '',
-    primaryColor: '#0F172A',
+    primaryColor: '#0078D4',
     secondaryColor: '#D4AF37',
     mhNit: '',
     mhApiPassword: '',
+    mhCertPassword: '',
+    environment: '00',
     smtpHost: '',
     smtpPort: '',
     smtpUser: '',
-    smtpPass: '',
-    logoUrl: ''
+    smtpPass: ''
   });
 
-  const [selectedLogo, setSelectedLogo] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [certFile, setCertFile] = useState<File | null>(null);
+  const [hasCert, setHasCert] = useState(false);
 
   useEffect(() => {
     fetchSettings();
@@ -40,32 +44,37 @@ const SettingsView = () => {
   const fetchSettings = async () => {
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.get('http://localhost:3000/api/settings', {
+      const { data } = await axios.get('/api/settings', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (data.success && data.data) {
+        const s = data.data;
         setFormData({
-          companyName: data.data.companyName || '',
-          commercialName: data.data.commercialName || '',
-          economicActivity: data.data.economicActivity || '',
-          phone: data.data.phone || '',
-          address: data.data.address || '',
-          establecimiento: data.data.establecimiento || 'M001',
-          puntoVenta: data.data.puntoVenta || 'P001',
-          nrc: data.data.nrc || '',
-          email: data.data.email || '',
-          primaryColor: data.data.primaryColor || '#0F172A',
-          secondaryColor: data.data.secondaryColor || '#D4AF37',
-          mhNit: data.data.mhNit || '',
-          mhApiPassword: data.data.mhApiPassword || '',
-          smtpHost: data.data.smtpHost || '',
-          smtpPort: data.data.smtpPort || '',
-          smtpUser: data.data.smtpUser || '',
-          smtpPass: data.data.smtpPass || '',
-          logoUrl: data.data.logoUrl || ''
+          companyName: s.companyName || '',
+          commercialName: s.commercialName || '',
+          economicActivity: s.economicActivity || '',
+          phone: s.phone || '',
+          address: s.address || '',
+          establecimiento: s.establecimiento || 'M001',
+          puntoVenta: s.puntoVenta || 'P001',
+          nrc: s.nrc || '',
+          email: s.email || '',
+          primaryColor: s.primaryColor || '#0078D4',
+          secondaryColor: s.secondaryColor || '#D4AF37',
+          mhNit: s.mhNit || '',
+          mhApiPassword: s.mhApiPassword || '',
+          mhCertPassword: s.mhCertPassword || '',
+          environment: s.environment || '00',
+          smtpHost: s.smtpHost || '',
+          smtpPort: s.smtpPort || '',
+          smtpUser: s.smtpUser || '',
+          smtpPass: s.smtpPass || ''
         });
-        if (data.data.logoUrl) {
-          setLogoPreview(`http://localhost:3000${data.data.logoUrl}`);
+        if (s.logoUrl) {
+          setLogoPreview(s.logoUrl);
+        }
+        if (s.hasCert) {
+          setHasCert(true);
         }
       }
     } catch (error) {
@@ -75,34 +84,33 @@ const SettingsView = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setSelectedLogo(file);
+      setLogoFile(file);
       setLogoPreview(URL.createObjectURL(file));
     }
   };
 
-  const handleSave = async () => {
+  const handleSave = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     setIsSaving(true);
     setSuccessMsg('');
     try {
       const token = localStorage.getItem('token');
       
-      // Save settings text data
-      await axios.put('http://localhost:3000/api/settings', formData, {
+      await axios.post('/api/settings', formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      // Save logo if selected
-      if (selectedLogo) {
+      if (logoFile) {
         const formDataLogo = new FormData();
-        formDataLogo.append('logo', selectedLogo);
-        await axios.post('http://localhost:3000/api/settings/logo', formDataLogo, {
+        formDataLogo.append('logo', logoFile);
+        await axios.post('/api/settings/logo', formDataLogo, {
           headers: { 
             Authorization: `Bearer ${token}`,
             'Content-Type': 'multipart/form-data'
@@ -110,11 +118,23 @@ const SettingsView = () => {
         });
       }
 
+      if (certFile) {
+        const formDataCert = new FormData();
+        formDataCert.append('certFile', certFile);
+        await axios.post('/api/settings/cert', formDataCert, {
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        setHasCert(true);
+      }
+
       setSuccessMsg('Configuración guardada exitosamente.');
       setTimeout(() => setSuccessMsg(''), 3000);
     } catch (error) {
       console.error("Error saving settings", error);
-      alert("Hubo un error al guardar la configuración.");
+      alert(error.response?.data?.error || 'No se pudo guardar la configuración. Revisa los campos e inténtalo de nuevo.');
     } finally {
       setIsSaving(false);
     }
@@ -131,7 +151,7 @@ const SettingsView = () => {
           <h2>Configuración del Sistema</h2>
           <p style={{color: '#64748b', marginTop: '0.25rem'}}>Gestiona las llaves de seguridad, correos automáticos e identidad de la marca.</p>
         </div>
-        <button className="antigravity-button" onClick={handleSave} disabled={isSaving}>
+        <button className="antigravity-button" onClick={() => handleSave()} disabled={isSaving}>
           {isSaving ? <Loader2 className="spinner" size={18} /> : <Save size={18} />}
           {isSaving ? 'Guardando...' : 'Guardar Cambios'}
         </button>
@@ -163,17 +183,45 @@ const SettingsView = () => {
           
           {activeTab === 'mh' && (
             <div className="tab-pane">
-              <h3>Credenciales de Transmisión DTE</h3>
+              <h3 style={{ marginTop: '0', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', color: 'var(--text-primary)' }}>Integración Ministerio de Hacienda (DTE)</h3>
               <p className="tab-desc">Ingresa los datos de autenticación provistos por el Ministerio de Hacienda para firmar y timbrar electrónicamente. Estos datos se almacenan encriptados.</p>
               
-              <div className="form-grid">
-                <div className="form-group">
-                  <label className="antigravity-label">NIT del Emisor</label>
-                  <input type="text" name="mhNit" className="antigravity-input" placeholder="Ej. 0614-100424-101-5" value={formData.mhNit} onChange={handleChange} />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>NIT del Emisor</label>
+                  <input type="text" name="mhNit" className="antigravity-input" placeholder="Ej. 0614-010190-101-1" value={formData.mhNit} onChange={handleChange} />
                 </div>
-                <div className="form-group">
-                  <label className="antigravity-label">Contraseña API / Certificado (Token)</label>
-                  <input type="password" name="mhApiPassword" className="antigravity-input" placeholder="••••••••" value={formData.mhApiPassword} onChange={handleChange} />
+                <div>
+                  <label style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>
+                    Contraseña de API (MH)
+                    <Tooltip content="Clave generada en el portal del MH, sección API." size={14} />
+                  </label>
+                  <input type="password" name="mhApiPassword" className="antigravity-input" placeholder="********" value={formData.mhApiPassword} onChange={handleChange} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Entorno (Pruebas / Producción)</label>
+                  <select name="environment" className="antigravity-input" value={formData.environment} onChange={handleChange}>
+                    <option value="00">Ambiente de Pruebas (00)</option>
+                    <option value="01">Ambiente de Producción (01)</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>
+                    Contraseña del Certificado (.p12)
+                    <Tooltip content="Contraseña asignada al descargar el certificado de firma." size={14} />
+                  </label>
+                  <input type="password" name="mhCertPassword" className="antigravity-input" placeholder="********" value={formData.mhCertPassword} onChange={handleChange} />
+                </div>
+                <div style={{ gridColumn: '1 / -1' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>
+                    Certificado de Firma Criptográfica (.p12)
+                    <Tooltip content="Sube el archivo PKCS#12 proporcionado por el MH." size={14} />
+                  </label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <input type="file" accept=".p12" onChange={(e) => { if (e.target.files && e.target.files[0]) setCertFile(e.target.files[0]); }} style={{ padding: '8px', border: '1px dashed var(--border-color)', borderRadius: '6px', width: '100%' }} />
+                    {hasCert && <span style={{ color: 'var(--success)', whiteSpace: 'nowrap', fontSize: '14px' }}>✓ Certificado Activo</span>}
+                  </div>
+                  <p style={{ fontSize: '12px', color: '#64748b', marginTop: '4px' }}>Sube el archivo PKCS#12 proporcionado por el Ministerio de Hacienda para firmar los DTEs.</p>
                 </div>
               </div>
             </div>
@@ -212,40 +260,44 @@ const SettingsView = () => {
               
               <div className="form-grid">
                 <div className="form-group">
-                  <label className="antigravity-label">Razón Social</label>
-                  <input type="text" name="companyName" className="antigravity-input" placeholder="G&G SOLUTIONS..." value={formData.companyName} onChange={handleChange} />
+                  <label className="antigravity-label">Razón Social <span style={{color: 'var(--danger-color)'}}>*</span></label>
+                  <input type="text" name="companyName" className="antigravity-input" placeholder="Ej. Empresa Emisora S.A. de C.V." value={formData.companyName} onChange={handleChange} />
+                </div>
+                <div className="form-group">
+                  <label className="antigravity-label">NIT del Emisor <span style={{color: 'var(--danger-color)'}}>*</span></label>
+                  <input type="text" name="mhNit" className="antigravity-input" placeholder="Ej. 0614-010190-101-1" value={formData.mhNit} onChange={handleChange} />
                 </div>
                 <div className="form-group">
                   <label className="antigravity-label">Nombre Comercial</label>
-                  <input type="text" name="commercialName" className="antigravity-input" placeholder="G&G solutions" value={formData.commercialName} onChange={handleChange} />
+                  <input type="text" name="commercialName" className="antigravity-input" placeholder="Ej. Nombre Comercial" value={formData.commercialName} onChange={handleChange} />
                 </div>
                 <div className="form-group">
                   <label className="antigravity-label">Actividad Económica</label>
-                  <input type="text" name="economicActivity" className="antigravity-input" placeholder="CONSULTORÍAS Y GESTIÓN..." value={formData.economicActivity} onChange={handleChange} />
+                  <input type="text" name="economicActivity" className="antigravity-input" placeholder="Ej. Venta de Productos y Servicios" value={formData.economicActivity} onChange={handleChange} />
                 </div>
                 <div className="form-group">
                   <label className="antigravity-label">NRC Comercial</label>
-                  <input type="text" name="nrc" className="antigravity-input" placeholder="342043-9" value={formData.nrc} onChange={handleChange} />
+                  <input type="text" name="nrc" className="antigravity-input" placeholder="Ej. 00000-0" value={formData.nrc} onChange={handleChange} />
                 </div>
                 <div className="form-group">
                   <label className="antigravity-label">Correo Electrónico (Contacto)</label>
-                  <input type="email" name="email" className="antigravity-input" placeholder="correo@empresa.com" value={formData.email} onChange={handleChange} />
+                  <input type="email" name="email" className="antigravity-input" placeholder="Ej. info@empresa.com" value={formData.email} onChange={handleChange} />
                 </div>
                 <div className="form-group">
                   <label className="antigravity-label">Teléfono de Contacto</label>
-                  <input type="text" name="phone" className="antigravity-input" placeholder="2222-0000" value={formData.phone} onChange={handleChange} />
+                  <input type="text" name="phone" className="antigravity-input" placeholder="Ej. 2222-2222" value={formData.phone} onChange={handleChange} />
                 </div>
                 <div className="form-group" style={{gridColumn: '1 / -1'}}>
                   <label className="antigravity-label">Dirección Completa</label>
-                  <input type="text" name="address" className="antigravity-input" placeholder="Calle, Polígono, Colonia, Municipio..." value={formData.address} onChange={handleChange} />
+                  <input type="text" name="address" className="antigravity-input" placeholder="Ej. San Salvador, El Salvador" value={formData.address} onChange={handleChange} />
                 </div>
                 <div className="form-group">
                   <label className="antigravity-label">Casa Matriz/Sucursal</label>
-                  <input type="text" name="establecimiento" className="antigravity-input" placeholder="M001" value={formData.establecimiento} onChange={handleChange} />
+                  <input type="text" name="establecimiento" className="antigravity-input" placeholder="Ej. M001" value={formData.establecimiento} onChange={handleChange} />
                 </div>
                 <div className="form-group">
                   <label className="antigravity-label">Punto de Venta</label>
-                  <input type="text" name="puntoVenta" className="antigravity-input" placeholder="P001" value={formData.puntoVenta} onChange={handleChange} />
+                  <input type="text" name="puntoVenta" className="antigravity-input" placeholder="Ej. P001" value={formData.puntoVenta} onChange={handleChange} />
                 </div>
                 <div className="form-group">
                   <label className="antigravity-label">Color Principal (Bordes)</label>

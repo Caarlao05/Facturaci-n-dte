@@ -3,6 +3,9 @@
   flex-direction: column;
   gap: 1.5rem;
   padding-bottom: 2rem;
+  --brand-primary: var(--accent-blue, #3b82f6);
+  --brand-primary-rgb: 59, 130, 246;
+  --text-color: var(--text-secondary);
 }
 
 .settings-layout {

@@ -4,25 +4,116 @@
   justify-content: center;
   min-height: 100vh;
   width: 100vw;
-  background-color: #030408;
-  color: #fff;
+  background-color: #03050c;
+  color: #f8fafc;
   position: relative;
   overflow: hidden;
   font-family: 'Outfit', -apple-system, sans-serif;
 }
 
-/* Background static gradient (removed slow animation) */
+/* Background simple gradient */
 .login-container::before {
   content: '';
   position: absolute;
-  top: -50%; left: -50%;
-  width: 200%; height: 200%;
-  background: radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.08) 0%, transparent 50%),
-              radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.05) 0%, transparent 40%);
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(circle at 50% 30%, #0c1224 0%, #03050c 80%);
   z-index: 0;
 }
 
-/* Partículas animadas */
+/* Rejilla 3D Estática para Alto Rendimiento (Evita repintes continuos) */
+.login-grid-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(3, 5, 12, 0) 40%, #03050c 95%),
+    linear-gradient(90deg, rgba(59, 130, 246, 0.02) 1px, transparent 1px),
+    linear-gradient(rgba(59, 130, 246, 0.02) 1px, transparent 1px);
+  background-size: 100% 100%, 50px 50px, 50px 50px;
+  z-index: 1;
+  overflow: hidden;
+  opacity: 0.85;
+}
+
+.login-grid-bg::after {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  background-image: 
+    linear-gradient(90deg, rgba(124, 58, 237, 0.04) 1px, transparent 1px),
+    linear-gradient(rgba(124, 58, 237, 0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  transform: rotateX(70deg);
+  transform-origin: center top;
+  /* Eliminada animación para optimizar rendimiento de CPU/GPU */
+}
+
+/* Escáner HUD Simplificado (Una sola capa de rotación lenta acelerada por hardware) */
+.hud-scanner {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  border: 1px dashed rgba(59, 130, 246, 0.1);
+  z-index: 2;
+  pointer-events: none;
+  animation: spinClockwise 80s linear infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+  will-change: transform;
+}
+
+.hud-scanner::before {
+  content: '';
+  position: absolute;
+  width: 480px;
+  height: 480px;
+  border-radius: 50%;
+  border: 1px solid rgba(124, 58, 237, 0.06);
+  border-left-color: rgba(124, 58, 237, 0.25);
+  /* Estático para evitar capas redundantes de renderizado */
+}
+
+.hud-scanner::after {
+  content: '';
+  position: absolute;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  border: 1px dotted rgba(59, 130, 246, 0.04);
+  border-right-color: rgba(59, 130, 246, 0.15);
+}
+
+@keyframes spinClockwise {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Capa CRT Estática (Optimizada) */
+.scanlines-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.15) 50%
+  );
+  background-size: 100% 4px;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0.25;
+}
+
+/* Partículas Estáticas / Ligeras */
 .login-container .particles-overlay {
   position: absolute;
   top: 0;
@@ -30,45 +121,42 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
-  z-index: 1;
+  z-index: 2;
 }
 
 .login-container .particle {
   position: absolute;
-  background: radial-gradient(circle, rgba(0, 229, 255, 0.4) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
   border-radius: 50%;
-  animation: float 20s infinite ease-in-out;
-  opacity: 0.6;
-  will-change: transform;
+  opacity: 0.4;
+  pointer-events: none;
 }
 
-.login-container .particle-1 { width: 400px; height: 400px; top: -150px; left: -100px; animation-delay: 0s; }
-.login-container .particle-2 { width: 500px; height: 500px; bottom: -200px; right: -150px; animation-delay: -7s; background: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%); }
-.login-container .particle-3 { width: 300px; height: 300px; top: 30%; left: 40%; animation-delay: -14s; background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, transparent 70%); }
+/* Solo orbes fijos para evitar animaciones de posición pesadas */
+.login-container .particle-1 { width: 350px; height: 350px; top: -100px; left: -80px; }
+.login-container .particle-2 { width: 450px; height: 450px; bottom: -150px; right: -100px; background: radial-gradient(circle, rgba(124, 58, 237, 0.12) 0%, transparent 70%); }
+.login-container .particle-3 { width: 250px; height: 250px; top: 25%; left: 35%; background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, transparent 70%); }
 
-@keyframes float {
-  0% { transform: translate3d(0, 0, 0) scale(1); }
-  50% { transform: translate3d(0, -30px, 0) scale(1.05); }
-  100% { transform: translate3d(0, 0, 0) scale(1); }
-}
-
-/* Glass Panel */
+/* Panel de Cristal Optimizado (Menor radio de blur para acelerar el GPU) */
 .login-container .glass-panel {
-  background: rgba(16, 18, 26, 0.7);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  will-change: transform, opacity;
+  background: rgba(8, 12, 24, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 24px;
   padding: 56px 48px;
   width: 100%;
   max-width: 460px;
   z-index: 10;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 20px 45px rgba(0, 0, 0, 0.7),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 20px rgba(59, 130, 246, 0.1);
   transform: translateY(20px);
   opacity: 0;
-  animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   position: relative;
+  overflow: hidden;
 }
 
 @keyframes slideUpFade {
@@ -78,62 +166,51 @@
 .login-header {
   text-align: center;
   margin-bottom: 40px;
+  position: relative;
+  z-index: 2;
 }
 
 .login-container .logo-pulse {
   position: relative;
-  width: 72px;
-  height: 72px;
+  height: 64px;
   margin: 0 auto 28px auto;
-}
-
-.login-container .logo-icon {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #00e5ff 0%, #0077ff 100%);
-  border-radius: 20px;
   display: flex;
-  align-items: center;
   justify-content: center;
-  font-size: 36px;
-  font-weight: 800;
-  color: white;
-  z-index: 2;
-  box-shadow: 0 10px 30px -5px rgba(0, 229, 255, 0.5);
 }
 
-.login-container .pulse-ring {
-  position: absolute;
-  top: -12px; left: -12px; right: -12px; bottom: -12px;
-  border-radius: 24px;
-  border: 2px solid rgba(0, 229, 255, 0.4);
-  animation: loginPulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  z-index: 1;
+.login-container .login-logo-img {
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.3));
 }
 
-@keyframes loginPulse {
-  0% { transform: scale(0.85); opacity: 1; }
-  100% { transform: scale(1.3); opacity: 0; }
-}
-
-.login-header h2 {
-  font-size: 32px;
-  font-weight: 600;
+.login-header h1 {
+  font-size: 28px;
+  font-weight: 700;
   margin: 0 0 12px 0;
   letter-spacing: -0.5px;
-  background: linear-gradient(to right, #ffffff, #a1a1aa);
+  background: linear-gradient(90deg, #ffffff, #e2e8f0, #3b82f6, #c084fc, #ffffff);
+  background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  animation: shineText 8s linear infinite;
+  text-shadow: 0 0 15px rgba(59, 130, 246, 0.05);
 }
 
-.subtitle {
-  color: #94a3b8;
+@keyframes shineText {
+  to { background-position: 200% center; }
+}
+
+.login-header p {
+  color: var(--text-secondary);
   font-size: 15px;
   margin: 0;
   font-weight: 400;
+}
+
+.login-form {
+  position: relative;
+  z-index: 2;
 }
 
 .login-container .input-group {
@@ -149,76 +226,58 @@
 .login-container .input-icon {
   position: absolute;
   left: 20px;
-  color: #64748b;
-  transition: color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  color: var(--text-tertiary);
+  pointer-events: none;
 }
 
 .login-container .input-icon-wrapper input {
   width: 100%;
-  padding: 18px 18px 18px 56px;
-  background: rgba(0, 0, 0, 0.3);
+  padding: 16px 16px 16px 50px;
+  background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
-  color: white;
+  border-radius: 12px;
+  color: #ffffff;
   font-size: 15px;
   font-family: 'Outfit', sans-serif;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .login-container .input-icon-wrapper input:focus {
   outline: none;
-  background: rgba(0, 0, 0, 0.6);
-  border-color: #00e5ff;
-  box-shadow: 0 0 0 4px rgba(0, 229, 255, 0.15);
-}
-
-.login-container .input-icon-wrapper input:focus + .login-container .input-icon {
-  color: #00e5ff;
+  border-color: #3b82f6;
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.15);
 }
 
 .login-container .btn-login {
-  position: relative;
   width: 100%;
-  padding: 18px;
-  background: linear-gradient(135deg, #00e5ff 0%, #0077ff 100%);
+  padding: 16px;
+  background: linear-gradient(135deg, #3b82f6 0%, #7c3aed 100%);
   color: white;
   border: none;
-  border-radius: 16px;
-  font-size: 16px;
+  border-radius: 12px;
+  font-size: 16.5px;
   font-weight: 600;
   font-family: 'Outfit', sans-serif;
   cursor: pointer;
-  overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  box-shadow: 0 8px 25px -5px rgba(0, 229, 255, 0.4);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.25);
+  position: relative;
+  overflow: hidden;
 }
 
 .login-container .btn-login:hover:not(:disabled) {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 35px -5px rgba(0, 229, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(124, 58, 237, 0.4), 0 0 8px rgba(59, 130, 246, 0.2);
 }
 
 .login-container .btn-login:active:not(:disabled) {
   transform: translateY(0);
-}
-
-.btn-glow {
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  transform: skewX(-20deg);
-  transition: 0.6s ease-in-out;
-}
-
-.login-container .btn-login:hover:not(:disabled) .btn-glow {
-  left: 200%;
 }
 
 .error-alert {
@@ -226,13 +285,13 @@
   align-items: center;
   gap: 10px;
   padding: 14px 18px;
-  background: rgba(239, 68, 68, 0.1);
+  background: rgba(239, 68, 68, 0.08);
   border: 1px solid rgba(239, 68, 68, 0.2);
   border-radius: 12px;
   color: #fca5a5;
   margin-bottom: 24px;
   font-size: 14px;
-  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+  animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
 }
 
 @keyframes shake {
@@ -243,7 +302,7 @@
 }
 
 .spinner {
-  animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
@@ -254,7 +313,9 @@
 .login-footer {
   margin-top: 40px;
   text-align: center;
-  color: #64748b;
+  color: var(--text-muted);
   font-size: 13px;
   font-weight: 400;
+  position: relative;
+  z-index: 2;
 }

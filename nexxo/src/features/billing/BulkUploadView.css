@@ -4,6 +4,7 @@
   gap: 2rem;
   max-width: 1200px;
   margin: 0 auto;
+  animation: fadeIn 0.4s ease-out;
 }
 
 .view-header {
@@ -12,49 +13,71 @@
   align-items: center;
 }
 
+.view-header h2 {
+  font-size: 22px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 .dropzone {
-  border: 2px dashed #d4af37;
-  border-radius: 16px;
+  border: 2px dashed rgba(59, 130, 246, 0.3);
+  border-radius: var(--radius-md);
   padding: 4rem 2rem;
   text-align: center;
-  background-color: var(--bg-tertiary);
+  background-color: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 1.2rem;
+  box-shadow: var(--shadow-glass);
 }
 
 .dropzone:hover, .dropzone.active {
-  background-color: rgba(212, 175, 55, 0.05);
-  border-color: var(--accent-hover);
+  background-color: rgba(59, 130, 246, 0.06);
+  border-color: var(--accent-blue);
+  box-shadow: var(--shadow-glass), 0 0 15px rgba(59, 130, 246, 0.2);
 }
 
 .dropzone .icon {
-  color: #d4af37;
-  background: rgba(212, 175, 55, 0.1);
-  padding: 1rem;
+  color: var(--accent-blue);
+  background: rgba(59, 130, 246, 0.1);
+  padding: 1.2rem;
   border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.dropzone:hover .icon {
+  background: rgba(59, 130, 246, 0.2);
+  transform: scale(1.05);
 }
 
 .dropzone h3 {
   color: var(--text-primary);
   font-size: 1.25rem;
+  font-weight: 600;
   margin: 0;
 }
 
 .dropzone p {
   color: var(--text-secondary);
   margin: 0;
+  font-size: 13.5px;
 }
 
 /* Tabla de Preview */
 .preview-panel {
-  background: var(--bg-secondary);
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+  background: var(--bg-panel);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-radius: var(--radius-md);
+  padding: 24px;
+  box-shadow: var(--shadow-glass);
   border: 1px solid var(--border-color);
 }
 
@@ -64,49 +87,73 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 12px;
 }
 
 .data-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 1.5rem;
+  font-size: 13.5px;
 }
 
 .data-table th {
   text-align: left;
-  padding: 1rem;
-  background-color: var(--bg-tertiary);
-  color: var(--text-secondary);
+  padding: 14px;
+  background-color: rgba(255, 255, 255, 0.01);
+  color: var(--text-muted);
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   border-bottom: 2px solid var(--border-color);
 }
 
 .data-table td {
-  padding: 1rem;
+  padding: 14px;
   border-bottom: 1px solid var(--border-color);
   color: var(--text-primary);
-  font-size: 0.9rem;
+}
+
+.data-table tr {
+  transition: background-color 0.2s ease;
+}
+
+.data-table tr:hover {
+  background-color: rgba(255, 255, 255, 0.02);
 }
 
 .row-error td {
-  background-color: rgba(239, 68, 68, 0.1);
+  background-color: rgba(239, 68, 68, 0.03);
 }
+
+.row-error:hover td {
+  background-color: rgba(239, 68, 68, 0.05) !important;
+}
+
 .error-badge {
-  background: #fee2e2;
-  color: #ef4444;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
   font-weight: 600;
+  text-transform: uppercase;
 }
+
 .status-badge.success {
-  background: #dcfce7;
-  color: #16a34a;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
+  background: rgba(16, 185, 129, 0.1);
+  color: #a7f3d0;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
   font-weight: 600;
+  text-transform: uppercase;
 }
 
 .hidden-input {

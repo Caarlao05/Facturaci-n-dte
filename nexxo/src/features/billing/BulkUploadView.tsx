@@ -26,14 +26,35 @@ const BulkUploadView = () => {
 
   const downloadTemplate = () => {
     const templateData = [
-      { TipoDTE: '01', DocumentoReceptor: '0614-010190-111-2', NombreCliente: 'Empresa Demo SA de CV', Descripcion: 'Servicio Contable', Cantidad: 1, PrecioUnitario: 150.00, DocRelacionado: '', PaisDestino: '', Incoterm: '' },
-      { TipoDTE: '14', DocumentoReceptor: '01234567-8', NombreCliente: 'Juan Perez', Descripcion: 'Mantenimiento PC', Cantidad: 2, PrecioUnitario: 50.00, DocRelacionado: '', PaisDestino: '', Incoterm: '' },
-      { TipoDTE: '11', DocumentoReceptor: 'EX-0001', NombreCliente: 'Global Import', Descripcion: 'Licencia Software', Cantidad: 1, PrecioUnitario: 1000.00, DocRelacionado: '', PaisDestino: 'USA', Incoterm: 'FOB' }
+      { TipoDTE: '01', DocumentoReceptor: '06140101901112', NombreCliente: 'Empresa Demo SA de CV', Descripcion: 'Servicio Contable', Cantidad: 1, PrecioUnitario: 150.00, DocRelacionado: '', PaisDestino: '', Incoterm: '' },
+      { TipoDTE: '14', DocumentoReceptor: '012345678', NombreCliente: 'Juan Perez', Descripcion: 'Mantenimiento PC', Cantidad: 2, PrecioUnitario: 50.00, DocRelacionado: '', PaisDestino: '', Incoterm: '' },
+      { TipoDTE: '11', DocumentoReceptor: 'EX0001', NombreCliente: 'Global Import', Descripcion: 'Licencia Software', Cantidad: 1, PrecioUnitario: 1000.00, DocRelacionado: '', PaisDestino: 'USA', Incoterm: 'FOB' },
+      { TipoDTE: '03', DocumentoReceptor: '06142509152125', NombreCliente: 'Grupo Agrisal', Descripcion: 'Migración Nube', Cantidad: 1, PrecioUnitario: 2000.00, DocRelacionado: '', PaisDestino: '', Incoterm: '' }
     ];
     const ws = XLSX.utils.json_to_sheet(templateData);
+    
+    // Configurar anchos de columna para la hoja de datos
+    ws['!cols'] = [
+      { wch: 10 }, { wch: 20 }, { wch: 30 }, { wch: 35 }, { wch: 10 }, { wch: 16 }, { wch: 18 }, { wch: 14 }, { wch: 12 }
+    ];
+
+    const instructionsData = [
+      { Campo: 'TipoDTE', Obligatorio: 'Sí', Descripcion: '01 = Factura, 03 = Crédito Fiscal, 11 = Exportación, 14 = Sujeto Excluido' },
+      { Campo: 'DocumentoReceptor', Obligatorio: 'Sí', Descripcion: 'NIT, NRC o DUI del cliente (preferiblemente sin guiones)' },
+      { Campo: 'NombreCliente', Obligatorio: 'Sí', Descripcion: 'Razón Social o Nombre Completo del receptor' },
+      { Campo: 'Descripcion', Obligatorio: 'Sí', Descripcion: 'Detalle del producto o servicio vendido' },
+      { Campo: 'Cantidad', Obligatorio: 'Sí', Descripcion: 'Debe ser mayor a 0' },
+      { Campo: 'PrecioUnitario', Obligatorio: 'Sí', Descripcion: 'En Factura(01) incluye IVA. En CCF(03) es SIN IVA.' },
+      { Campo: 'PaisDestino', Obligatorio: 'Solo DTE 11', Descripcion: 'País destino de la exportación (Ej. USA, MEX)' },
+      { Campo: 'Incoterm', Obligatorio: 'Solo DTE 11', Descripcion: 'Término de comercio internacional (Ej. FOB, CIF)' }
+    ];
+    const wsInstruct = XLSX.utils.json_to_sheet(instructionsData);
+    wsInstruct['!cols'] = [{ wch: 20 }, { wch: 15 }, { wch: 80 }];
+
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Plantilla_Universal");
-    XLSX.writeFile(wb, "Plantilla_Universal_DTE.xlsx");
+    XLSX.utils.book_append_sheet(wb, wsInstruct, "Instrucciones (LEER)");
+    XLSX.utils.book_append_sheet(wb, ws, "Datos_DTE");
+    XLSX.writeFile(wb, "Plantilla_Carga_Masiva_DTE.xlsx");
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,6 +139,9 @@ const BulkUploadView = () => {
           <div className="icon" style={{color: 'var(--brand-accent)'}}><FileSpreadsheet size={48} /></div>
           <h3 style={{marginTop: '1rem'}}>Arrastra tu plantilla Excel aquí</h3>
           <p>Soporta mezclado de FCF, CCF, NC, Sujetos Excluidos y Exportaciones (.xlsx)</p>
+          <div style={{ marginTop: '1rem', display: 'inline-block', backgroundColor: 'rgba(59,130,246,0.1)', color: 'var(--accent-blue)', padding: '6px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 600 }}>
+            💡 Tip: Revisa la hoja de Instrucciones en la plantilla
+          </div>
           <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept=".xlsx, .xls, .csv" className="hidden-input" />
         </div>
       )}
