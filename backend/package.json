@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node dist/src/presentation/api/server.js",
-    "build": "npx prisma generate && npx prisma db push && tsc",
+    "build": "npx prisma generate && tsc",
     "dev": "nodemon --exec ts-node src/presentation/api/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -107,5 +107,9 @@ app.use((req, res) => {
 
 app.listen(Number(port), '0.0.0.0', async () => {
   console.log(`🚀 Facturación DTE Backend corriendo en http://0.0.0.0:${port}`);
-  await createInitialUser();
+  try {
+    await createInitialUser();
+  } catch (error) {
+    console.error("⚠️ Error conectando a la BD al iniciar el servidor:", error);
+  }
 });
