@@ -5,7 +5,7 @@
   "scripts": {
     "postinstall": "npm install --prefix backend && npm install --prefix nexxo",
     "build": "npm run build --prefix nexxo && npm run build --prefix backend",
-    "start": "node backend/dist/presentation/api/server.js"
+    "start": "node backend/dist/src/presentation/api/server.js"
   },
   "author": "Quantis",
   "license": "ISC",
