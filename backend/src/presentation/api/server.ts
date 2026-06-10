@@ -1,4 +1,5 @@
 import express from 'express';
+import { exec } from 'child_process';
 import cors from 'cors';
 import { createInvoice } from './controllers/billing.controller';
 import { loginController } from './controllers/auth.controller';
@@ -105,11 +106,20 @@ app.use((req, res) => {
   res.sendFile('index.html', { root: path.join(__dirname, '../../nexxo/dist') });
 });
 
-app.listen(Number(port), '0.0.0.0', async () => {
+app.listen(Number(port), '0.0.0.0', () => {
   console.log(`🚀 Facturación DTE Backend corriendo en http://0.0.0.0:${port}`);
-  try {
-    await createInitialUser();
-  } catch (error) {
-    console.error("⚠️ Error conectando a la BD al iniciar el servidor:", error);
-  }
+  
+  console.log("Iniciando sincronización de base de datos en segundo plano...");
+  exec('npx prisma db push --schema=backend/prisma/schema.prisma --accept-data-loss', async (error, stdout, stderr) => {
+    if (error) {
+      console.error("⚠️ Error sincronizando DB (puede que aún no esté lista):", error.message);
+    } else {
+      console.log("✅ DB Sincronizada correctamente.");
+      try {
+        await createInitialUser();
+      } catch (e) {
+        console.error("⚠️ Error creando usuario admin:", e);
+      }
+    }
+  });
 });
