@@ -1,4 +1,4 @@
-import { authMH, transmitDTE, signDTE } from '../integrations/hacienda.api';
+import { authMH, transmitDTE, signDTE } from '../infrastructure/hacienda/hacienda.client';
 
 /**
  * Script de Certificación MH.

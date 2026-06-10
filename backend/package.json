@@ -7,9 +7,9 @@
     "seed": "ts-node prisma/seed.ts"
   },
   "scripts": {
-    "start": "ts-node --transpile-only src/server.ts",
+    "start": "node dist/presentation/api/server.js",
     "build": "npx prisma generate && tsc",
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "dev": "nodemon --exec ts-node src/presentation/api/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
