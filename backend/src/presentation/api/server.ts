@@ -105,7 +105,7 @@ app.use((req, res) => {
   res.sendFile('index.html', { root: path.join(__dirname, '../../nexxo/dist') });
 });
 
-app.listen(port, async () => {
-  console.log(`🚀 Facturación DTE Backend corriendo en http://localhost:${port}`);
+app.listen(Number(port), '0.0.0.0', async () => {
+  console.log(`🚀 Facturación DTE Backend corriendo en http://0.0.0.0:${port}`);
   await createInitialUser();
 });
