@@ -110,7 +110,7 @@ app.listen(Number(port), '0.0.0.0', () => {
   console.log(`🚀 Facturación DTE Backend corriendo en http://0.0.0.0:${port}`);
   
   console.log("Iniciando sincronización de base de datos en segundo plano...");
-  exec('npx prisma db push --schema=backend/prisma/schema.prisma --accept-data-loss', async (error, stdout, stderr) => {
+  exec('cd backend && npx prisma@5 db push --accept-data-loss', async (error, stdout, stderr) => {
     if (error) {
       console.error("⚠️ Error sincronizando DB (puede que aún no esté lista):", error.message);
     } else {
