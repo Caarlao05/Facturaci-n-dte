@@ -22,7 +22,7 @@ const ProductsView = () => {
     setIsLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:3000/api/products', {
+      const response = await axios.get('/api/products', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProducts(response.data);
@@ -53,7 +53,7 @@ const ProductsView = () => {
     setIsSubmitting(true);
     try {
       const token = localStorage.getItem('token');
-      await axios.post('http://localhost:3000/api/products', formData, {
+      await axios.post('/api/products', formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setIsModalOpen(false);

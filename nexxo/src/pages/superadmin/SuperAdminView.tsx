@@ -42,7 +42,7 @@ const SuperAdminView = () => {
   const fetchAnalytics = async () => {
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.get('http://localhost:3000/api/superadmin/analytics', {
+      const { data } = await axios.get('/api/superadmin/analytics', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (data.success) setChartData(data.data);
@@ -54,7 +54,7 @@ const SuperAdminView = () => {
   const fetchTenants = async () => {
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.get('http://localhost:3000/api/superadmin/tenants', {
+      const { data } = await axios.get('/api/superadmin/tenants', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (data.success) setTenants(data.data);
@@ -68,7 +68,7 @@ const SuperAdminView = () => {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.get('http://localhost:3000/api/superadmin/users', {
+      const { data } = await axios.get('/api/superadmin/users', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (data.success) setUsersList(data.data);
@@ -90,7 +90,7 @@ const SuperAdminView = () => {
     setIsSubmitting(true);
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.post('http://localhost:3000/api/superadmin/tenants', formData, {
+      const { data } = await axios.post('/api/superadmin/tenants', formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (data.success) {
@@ -128,7 +128,7 @@ const SuperAdminView = () => {
     setIsSubmitting(true);
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.put(`http://localhost:3000/api/superadmin/tenants/${selectedTenant.id}`, editData, {
+      const { data } = await axios.put(`/api/superadmin/tenants/${selectedTenant.id}`, editData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (data.success) {
@@ -146,7 +146,7 @@ const SuperAdminView = () => {
     setIsSubmitting(true);
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.delete(`http://localhost:3000/api/superadmin/tenants/${selectedTenant.id}`, {
+      const { data } = await axios.delete(`/api/superadmin/tenants/${selectedTenant.id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (data.success) {
@@ -167,7 +167,7 @@ const SuperAdminView = () => {
     setIsSubmitting(true);
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.post(`http://localhost:3000/api/superadmin/tenants/${selectedTenant.id}/recharge`, { amount: Number(rechargeAmount) }, {
+      const { data } = await axios.post(`/api/superadmin/tenants/${selectedTenant.id}/recharge`, { amount: Number(rechargeAmount) }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (data.success) {
@@ -186,7 +186,7 @@ const SuperAdminView = () => {
     
     try {
       const token = localStorage.getItem('token');
-      const { data } = await axios.post(`http://localhost:3000/api/superadmin/tenants/${t.id}/impersonate`, {}, {
+      const { data } = await axios.post(`/api/superadmin/tenants/${t.id}/impersonate`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       

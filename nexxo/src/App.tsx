@@ -17,6 +17,9 @@ import { GlobalHelpButton } from './components/common/HelpCenterModal';
 import { Bell, Zap, ZapOff } from 'lucide-react';
 import './App.css';
 
+// Configuración global de la API (Apunta al Backend en Producción o Localhost)
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
 const ProtectedLayout = () => {
   const [user, setUser] = useState<any>(null);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);

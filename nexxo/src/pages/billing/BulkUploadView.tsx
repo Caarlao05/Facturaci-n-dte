@@ -100,7 +100,7 @@ const BulkUploadView = () => {
       const token = localStorage.getItem('token');
       // Simulated batched process
       for (let i = 0; i < validRows.length; i++) {
-        await axios.post('http://localhost:3000/api/dte/batch-single', {
+        await axios.post('/api/dte/batch-single', {
           row: validRows[i]
         }, {
           headers: { Authorization: `Bearer ${token}` }

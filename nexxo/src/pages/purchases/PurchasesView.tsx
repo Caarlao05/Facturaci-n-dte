@@ -14,7 +14,7 @@ const PurchasesView = () => {
 
   const fetchPurchases = async () => {
     try {
-      const res = await fetch('/api/purchases', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/purchases`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       if (res.ok) {
@@ -41,7 +41,7 @@ const PurchasesView = () => {
     formData.append('json', file);
 
     try {
-      const res = await fetch('/api/purchases/import', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/purchases/import`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`

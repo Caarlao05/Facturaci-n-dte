@@ -26,8 +26,8 @@ const NewInvoiceView = () => {
       try {
         const token = localStorage.getItem('token');
         const [custRes, prodRes] = await Promise.all([
-          axios.get('http://localhost:3000/api/customers', { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get('http://localhost:3000/api/products', { headers: { Authorization: `Bearer ${token}` } })
+          axios.get('/api/customers', { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get('/api/products', { headers: { Authorization: `Bearer ${token}` } })
         ]);
         setCustomersList(custRes.data);
         setProductsList(prodRes.data);
@@ -121,7 +121,7 @@ const NewInvoiceView = () => {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post('http://localhost:3000/api/invoices', {
+      const response = await axios.post('/api/invoices', {
         customer,
         items,
         dteType

@@ -13,7 +13,7 @@ const ReportsView = () => {
       if (startDate) queryParams.append('startDate', startDate);
       if (endDate) queryParams.append('endDate', endDate);
 
-      const url = `http://localhost:3000/api/reports/${type}?${queryParams.toString()}`;
+      const url = `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/reports/${type}?${queryParams.toString()}`;
       
       const userStr = localStorage.getItem('user');
       let tenantId = '';
