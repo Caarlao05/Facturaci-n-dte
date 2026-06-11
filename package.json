@@ -5,11 +5,13 @@
   "scripts": {
     "postinstall": "npm install --prefix backend && npm install --prefix nexxo",
     "build": "npm run build --prefix nexxo && npm run build --prefix backend",
-    "start": "npx prisma db push --schema=backend/prisma/schema.prisma --accept-data-loss && node backend/dist/src/presentation/api/server.js"
+    "start": "node backend/dist/src/presentation/api/server.js"
   },
   "author": "Quantis",
   "license": "ISC",
   "dependencies": {
-    "puppeteer": "^25.1.0"
+    "puppeteer": "^25.1.0",
+    "prisma": "^5.22.0",
+    "@prisma/client": "^5.22.0"
   }
 }
