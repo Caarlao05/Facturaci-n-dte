@@ -99,11 +99,11 @@ app.get('/api/reports/purchases', requireAuth, getPurchasesReport);
 // UNIFICACIÓN: Servir Frontend (Nexxo)
 // ==========================================
 // Servimos la carpeta dist de Nexxo
-app.use(express.static(path.join(__dirname, '../../nexxo/dist')));
+app.use(express.static(path.join(__dirname, '../../../../../nexxo/dist')));
 
 // Ruta comodín (Catch-all) para que React Router maneje las URLs del navegador
 app.use((req, res) => {
-  res.sendFile('index.html', { root: path.join(__dirname, '../../nexxo/dist') });
+  res.sendFile('index.html', { root: path.join(__dirname, '../../../../../nexxo/dist') });
 });
 
 app.listen(Number(port), '0.0.0.0', () => {
